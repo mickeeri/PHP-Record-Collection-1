@@ -2,6 +2,7 @@
 
 require_once("Settings.php");
 require_once("view/LayoutView.php");
+require_once("view/NavigationView.php");
 require_once("controller/MasterController.php");
 
 if (Settings::DISPLAY_ERRORS) {
@@ -11,7 +12,9 @@ if (Settings::DISPLAY_ERRORS) {
 
 session_start();
 
-$mc = new \controller\MasterController();
+$nv = new \view\NavigationView();
+$mc = new \controller\MasterController($nv);
+
 
 $mc->handleInput();
 
@@ -20,5 +23,5 @@ $view = $mc->generateOutput();
 
 $lv = new \view\LayoutView();
 
-$lv->render($view);
+$lv->render($nv, $view);
 

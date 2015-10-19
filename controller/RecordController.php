@@ -5,9 +5,9 @@ namespace controller;
 /**
 * 
 */
-class HomeController {
+class RecordController {
 	
 	function __construct() {
-
+		# code...
 	}
 }

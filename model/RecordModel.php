@@ -1,13 +1,13 @@
 <?php
 
-namespace controller;
+namespace model;
 
 /**
 * 
 */
-class HomeController {
+class RecordModel {
 	
 	function __construct() {
-
+		# code...
 	}
 }
