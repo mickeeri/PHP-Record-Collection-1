@@ -15,7 +15,6 @@ session_start();
 $nv = new \view\NavigationView();
 $mc = new \controller\MasterController($nv);
 
-
 $mc->handleInput();
 
 // Deside which view is to be rendered based on handleInput();

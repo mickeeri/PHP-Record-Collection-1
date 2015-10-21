@@ -14,6 +14,7 @@ class NewRecordView {
 	private static $releaseYearInputId = "year";
 	private static $descriptionInputId = "description";
 	private static $priceInputId = "price";
+	private static $coverInputId = "cover";
 	private static $submitPostId = "save";
 
 	private $errorMessage = "";
@@ -46,7 +47,7 @@ class NewRecordView {
 			<h2>Lägg till ny skiva</h2>
 			' . $this->showErrorMessage() . '
 			' . $this->showSuccessMessage() . '
-			<form method="post">
+			<form method="post" enctype="multipart/form-data">
 				<div class="form-group">
 					<label for="' . self::$titleInputId . '">Titel</label>
 					<input type="text" class="form-control" name ="' . self::$titleInputId . '" id="' . self::$titleInputId . '" placeholder="Titel">
@@ -69,6 +70,11 @@ class NewRecordView {
 				<div class="form-group">
 					<label for="' . self::$priceInputId . '">Pris</label>
 					<input type="text" class="form-control" name ="' . self::$priceInputId . '" id="' . self::$priceInputId . '" placeholder="Pris">
+				</div>
+
+				<div class="form-group">
+					<label for="' . self::$coverInputId . '">Upload cover</label>
+					<input type="file" class="form-control" name ="' . self::$coverInputId . '" id="' . self::$coverInputId . '" value="Upload">
 				</div>
 				<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Spara">
 			</form>
@@ -120,8 +126,13 @@ class NewRecordView {
 		$releaseYear = $_POST[self::$releaseYearInputId];
 		$description = $_POST[self::$descriptionInputId];
 		$price = $_POST[self::$priceInputId];
+		$pic = $_FILES[self::$coverInputId];
+		
+		var_dump($pic["name"]);
+		$this->uploadCover($pic);	
 
 		try {
+					
 			return new \model\Record($title, $artist, $releaseYear, $description, $price);
 		} catch (\model\NoTitleException $e) {
 			$this->errorMessage = "Title is missing";
@@ -135,8 +146,59 @@ class NewRecordView {
 			$this->errorMessage = "The price is wrong.";
 		} catch (\Exception $e) {
 			$this->errorMessage = "Sorry! Something went wrong";
-		}
+		} 
 		
 		return null;
+	}
+
+	/**
+	 * Upload files 
+	 * https://github.com/phpmasterdotcom/FileUploadsWithPHP
+	 * @param  [type] $pic [description]
+	 * @return [type]      [description]
+	 */
+	public function uploadCover($pic) {
+		define("UPLOAD_DIR", "files/");
+
+		// Check if empty
+		// if (empty($_FILES[self::$coverInputId])){
+		// 	throw 
+		// }
+
+		$myFile = $pic;
+
+	    if ($myFile["error"] !== UPLOAD_ERR_OK) {
+	        echo "<p>An error occurred.</p>";
+	        exit;
+	    }
+
+	    // verify the file type
+	    $fileType = exif_imagetype($myFile["tmp_name"]);
+	    $allowed = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
+	    if (!in_array($fileType, $allowed)) {
+	        echo "<p>File type is not permitted.</p>";
+	        exit;
+	    }
+
+	    // ensure a safe filename
+	    $name = preg_replace("/[^A-Z0-9._-]/i", "_", $myFile["name"]);
+	    // don't overwrite an existing file
+	    $i = 0;
+	    $parts = pathinfo($name);
+	    while (file_exists(UPLOAD_DIR . $name)) {
+	        $i++;
+	        $name = $parts["filename"] . "-" . $i . "." . $parts["extension"];
+	    }
+	    
+	    // preserve file from temporary directory
+	    $success = move_uploaded_file($myFile["tmp_name"], UPLOAD_DIR . $name);
+	    if (!$success) {
+	        echo "<p>Unable to save file.</p>";
+	        exit;
+	    }
+	    
+	    // set proper permissions on the new file
+	    chmod(UPLOAD_DIR . $name, 0644);
+	    echo "<p>Uploaded file saved as " . $name . ".</p>";
 	}
 }
