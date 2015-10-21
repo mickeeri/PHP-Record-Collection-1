@@ -126,14 +126,10 @@ class NewRecordView {
 		$releaseYear = $_POST[self::$releaseYearInputId];
 		$description = $_POST[self::$descriptionInputId];
 		$price = $_POST[self::$priceInputId];
-		$pic = $_FILES[self::$coverInputId];
+		$cover = $_FILES[self::$coverInputId];
 		
-		var_dump($pic["name"]);
-		$this->uploadCover($pic);	
-
-		try {
-					
-			return new \model\Record($title, $artist, $releaseYear, $description, $price);
+		try {				
+			return new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
 		} catch (\model\NoTitleException $e) {
 			$this->errorMessage = "Title is missing";
 		} catch (\model\NoArtistException $e) {
@@ -151,54 +147,54 @@ class NewRecordView {
 		return null;
 	}
 
-	/**
-	 * Upload files 
-	 * https://github.com/phpmasterdotcom/FileUploadsWithPHP
-	 * @param  [type] $pic [description]
-	 * @return [type]      [description]
-	 */
-	public function uploadCover($pic) {
-		define("UPLOAD_DIR", "files/");
+	// /**
+	//  * Upload files 
+	//  * https://github.com/phpmasterdotcom/FileUploadsWithPHP
+	//  * @param  [type] $pic [description]
+	//  * @return [type]      [description]
+	//  */
+	// public function uploadCover($pic) {
 
-		// Check if empty
-		// if (empty($_FILES[self::$coverInputId])){
-		// 	throw 
-		// }
 
-		$myFile = $pic;
+	// 	// Check if empty
+	// 	// if (empty($_FILES[self::$coverInputId])){
+	// 	// 	throw 
+	// 	// }
 
-	    if ($myFile["error"] !== UPLOAD_ERR_OK) {
-	        echo "<p>An error occurred.</p>";
-	        exit;
-	    }
+	// 	$myFile = $pic;
 
-	    // verify the file type
-	    $fileType = exif_imagetype($myFile["tmp_name"]);
-	    $allowed = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
-	    if (!in_array($fileType, $allowed)) {
-	        echo "<p>File type is not permitted.</p>";
-	        exit;
-	    }
+	//     if ($myFile["error"] !== UPLOAD_ERR_OK) {
+	//         echo "<p>An error occurred.</p>";
+	//         exit;
+	//     }
 
-	    // ensure a safe filename
-	    $name = preg_replace("/[^A-Z0-9._-]/i", "_", $myFile["name"]);
-	    // don't overwrite an existing file
-	    $i = 0;
-	    $parts = pathinfo($name);
-	    while (file_exists(UPLOAD_DIR . $name)) {
-	        $i++;
-	        $name = $parts["filename"] . "-" . $i . "." . $parts["extension"];
-	    }
+	//     // verify the file type
+	//     $fileType = exif_imagetype($myFile["tmp_name"]);
+	//     $allowed = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
+	//     if (!in_array($fileType, $allowed)) {
+	//         echo "<p>File type is not permitted.</p>";
+	//         exit;
+	//     }
+
+	//     // ensure a safe filename
+	//     $name = preg_replace("/[^A-Z0-9._-]/i", "_", $myFile["name"]);
+	//     // don't overwrite an existing file
+	//     $i = 0;
+	//     $parts = pathinfo($name);
+	//     while (file_exists(Settings::PIC_UPLOAD_DIR . $name)) {
+	//         $i++;
+	//         $name = $parts["filename"] . "-" . $i . "." . $parts["extension"];
+	//     }
 	    
-	    // preserve file from temporary directory
-	    $success = move_uploaded_file($myFile["tmp_name"], UPLOAD_DIR . $name);
-	    if (!$success) {
-	        echo "<p>Unable to save file.</p>";
-	        exit;
-	    }
+	//     // preserve file from temporary directory
+	//     $success = move_uploaded_file($myFile["tmp_name"], Settings::PIC_UPLOAD_DIR . $name);
+	//     if (!$success) {
+	//         echo "<p>Unable to save file.</p>";
+	//         exit;
+	//     }
 	    
-	    // set proper permissions on the new file
-	    chmod(UPLOAD_DIR . $name, 0644);
-	    echo "<p>Uploaded file saved as " . $name . ".</p>";
-	}
+	//     // set proper permissions on the new file
+	//     chmod(Settings::PIC_UPLOAD_DIR . $name, 0644);
+	//     echo "<p>Uploaded file saved as " . $name . ".</p>";
+	// }
 }

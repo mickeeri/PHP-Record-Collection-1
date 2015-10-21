@@ -16,9 +16,11 @@ class Record {
 	private $releaseYear;
 	private $description;
 	private $price;
+	private $cover;
+
 
 	
-	function __construct($title, $artist, $releaseYear, $description, $price) {
+	function __construct($title, $artist, $releaseYear, $description, $price, $cover) {
 
 		// if (is_string($title) === false || $title === "") {
 		// 	throw new NoTitleException();
@@ -39,6 +41,14 @@ class Record {
 		// if (is_numeric($price) === false || $price < 0 || $price > 10000) {
 		// 	throw new WrongPriceException();
 		// }
+		// 
+		
+
+		
+		// Calls method to save and store picture file. Method returns name of file.
+		$this->cover = $this->validateAndSaveCoverFile($cover);
+
+		var_dump($this->cover);
 
 		$this->title = $title;
 		$this->artist = $artist;
@@ -73,5 +83,42 @@ class Record {
 
 	public function getPrice() {
 		return $this->price;
+	}
+
+	private function validateAndSaveCoverFile($image) {
+
+		if ($image["error"] !== UPLOAD_ERR_OK) {
+			throw new \Exception();
+		}
+
+		// verify the file type
+		$fileType = exif_imagetype($image["tmp_name"]);
+		$allowed = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
+		if (!in_array($fileType, $allowed)) {
+		    throw new InvalidFileTypeException();
+		}
+
+		// ensure a safe filename
+		$name = preg_replace("/[^A-Z0-9._-]/i", "_", $image["name"]);
+		
+		// don't overwrite an existing file
+		$i = 0;
+		$parts = pathinfo($name);
+		while (file_exists(\Settings::PIC_UPLOAD_DIR . $name)) {
+		    $i++;
+		    $name = $parts["filename"] . "-" . $i . "." . $parts["extension"];
+		}
+		
+		// preserve file from temporary directory
+		$success = move_uploaded_file($image["tmp_name"], \Settings::PIC_UPLOAD_DIR . $name);
+		if (!$success) {
+			throw new \Exception("Unable to save file");
+		}
+		
+		// set proper permissions on the new file
+		chmod(\Settings::PIC_UPLOAD_DIR . $name, 0644);
+		//echo "<p>Uploaded file saved as " . $name . ".</p>";
+
+		return $name;
 	}
 }
