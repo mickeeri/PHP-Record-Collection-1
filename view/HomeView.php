@@ -16,6 +16,10 @@ class HomeView {
 	}
 
 	private function getHTML() {
+		
+
+
+
 		return "
 			<h4>Välkommen till startsidan</h4>	
 		";

@@ -6,6 +6,7 @@ class NavigationView {
 
 	private static $newRecordURL = "nyskiva";
 	private static $recordListURL = "skivlista";
+	private static $recordShowURL = "record";
 	private static $newRecordLinkClass = "not-active";
 	private static $recordListLinkClass = "not-active";
 	private static $homeLinkClass = "not-active";
@@ -31,10 +32,23 @@ class NavigationView {
 		return isset($_GET[self::$recordListURL]);
 	}
 
+	public function onRecordShowPage() {
+		
+		return isset($_GET[self::$recordShowURL]);
+	}
+
+	/**
+	 * Provides record ID from the URL
+	 * @return string recordID
+	 */
+	public function getRecordToShow() {
+		return (int)$_GET[self::$recordShowURL];
+	}
+
 	private function setAsActive() {
 		if($this->onNewRecordPage()) {
 			self::$newRecordLinkClass = "active";
-		} elseif ($this->onRecordListPage()) {
+		} elseif ($this->onRecordListPage() || $this->onRecordShowPage()) {
 			self::$recordListLinkClass = "active";
 		} else {
 			self::$homeLinkClass = "active";

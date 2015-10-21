@@ -10,7 +10,7 @@ class WrongPriceException extends \Exception {};
 
 class Record {
 	
-	private $albumId;
+	private $recordID;
 	private $title; 
 	private $artist;
 	private $releaseYear;
@@ -47,8 +47,12 @@ class Record {
 		$this->price = $price;
 	}
 
-	public function setAlbumId($albumId) {
-		$this->albumId = $albumId;
+	public function setRecordID($recordID) {
+		$this->recordID = $recordID;
+	}
+
+	public function getRecordID() {
+		return $this->recordID;
 	}
 
 	public function getTitle() {

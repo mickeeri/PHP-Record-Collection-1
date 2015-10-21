@@ -14,6 +14,7 @@ class RecordFacade {
 	}
 
 	public function saveRecord(\model\Record $recordToBeAdded) {
+		
 		$this->dal->add($recordToBeAdded);
 	}
 
@@ -25,7 +26,7 @@ class RecordFacade {
 		// NOt implemented.
 	}
 
-	// public function getRecord($id) {
-	// 	return $this->dal->getRecordById($id);
-	// }
+	public function getRecord($id) {
+		return $this->dal->getRecordById($id);
+	}
 }

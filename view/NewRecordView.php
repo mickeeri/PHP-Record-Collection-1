@@ -5,7 +5,7 @@ namespace view;
 /**
 * 
 */
-class RecordView {
+class NewRecordView {
 	
 	
 	//private $errorMessageArray = array();
@@ -28,7 +28,7 @@ class RecordView {
 	 * @return [type]
 	 */
 	public function response() {
-				
+
 		if ($this->isRecordSaved) {
 			$this->successMessage = "Du har lagt till en ny skiva.";
 		}

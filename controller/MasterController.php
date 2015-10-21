@@ -3,7 +3,12 @@
 namespace controller;
 
 require_once("view/HomeView.php");
-require_once("view/RecordView.php");
+
+// Record views
+require_once("view/NewRecordView.php");
+require_once("view/IndexRecordView.php");
+require_once("view/ShowRecordView.php");
+
 
 require_once("controller/HomeController.php");
 require_once("controller/RecordController.php");
@@ -40,10 +45,26 @@ class MasterController {
 	 */
 	public function handleInput() {
 		if ($this->navigationView->onNewRecordPage()) {
-			$this->view = new \view\RecordView();
+			$this->view = new \view\NewRecordView();
 			$controller = new \controller\RecordController($this->view, $this->recordFacade);
 			$controller->addRecord();			
-		} else {
+		} 
+		
+		elseif ($this->navigationView->onRecordListPage()) {
+			$this->view = new \view\IndexRecordView();
+			$controller = new \controller\RecordController($this->view, $this->recordFacade);
+			$controller->getRecords();
+		} 
+
+		elseif ($this->navigationView->onRecordShowPage()) {
+			
+			$this->view = new \view\ShowRecordView();
+			$controller = new \controller\RecordController($this->view, $this->recordFacade);
+			$recordID = $this->navigationView->getRecordToShow();
+			$controller->getRecord($recordID);			
+		}
+		
+		else {
 			$controller = new \controller\HomeController();
 			$this->view = new \view\HomeView();
 		}
