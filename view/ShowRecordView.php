@@ -10,12 +10,17 @@ class ShowRecordView {
 
 	private static $deleteLinkID = "deleterecord";
 	private static $confirmDeleteRecordID = "confirmdelete";
+	private static $declineDeleteRecordID = "declinedelete";
+	private static $updateLinkID = "uppdateraskiva";
 
 	function __construct() {
 		# code...
 	}
 
 	public function response() {
+
+		var_dump($this->userHasDeclinedDelete());
+
 		if ($this->userWantsToDeleteRecord) {
 			$response = $this->deleteRecordConfirmation();
 		} else {
@@ -40,7 +45,8 @@ class ShowRecordView {
 			    <p>Release year: ' . $this->record->getReleaseYear() . '</p>
 			    <p>About: ' . $this->record->getDescription() . '</p>
 			    <p>Price: ' . $this->record->getPrice() . ' $</p>
-			    <a href="?'. self::$deleteLinkID . '=' . $this->record->getRecordID() . '">Radera skiva</a>
+			    <a href="?' . self::$deleteLinkID . '=' . $this->record->getRecordID() . '">Radera skiva</a>
+			    <a href="?' . self::$updateLinkID . '=' . $this->record->getRecordID() . '">Redigera skiva</a>
 			  </div>
 			</div>
 		';
@@ -55,7 +61,7 @@ class ShowRecordView {
 			</div>
 			<form method="post">
 				<input class="btn btn-danger" name="' . self::$confirmDeleteRecordID . '" type="submit" value="Ja">
-				<input class="btn btn-default" name="remove" type="submit" value="Nej">
+				<input class="btn btn-default" name="' . self::$declineDeleteRecordID . '" type="submit" value="Nej">
 			</form>
 		';
 
@@ -73,4 +79,9 @@ class ShowRecordView {
 	public function userHasConfirmedDelete() {
 		return isset($_POST[self::$confirmDeleteRecordID]);
 	}
+
+	// If user has answered no on question "Do you want to delete album..."
+	public function userHasDeclinedDelete() {		
+		return isset($_POST[self::$declineDeleteRecordID]);
+	}	
 }

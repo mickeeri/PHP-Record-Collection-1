@@ -33,7 +33,14 @@ class RecordController {
 			$recordTitle = $record->getTitle();
 			$this->facade->removeRecord($record);
 			$this->navigationView->redirect(\view\NavigationView::$recordListURL, $recordTitle . "har raderats.");
+		} elseif ($this->view->userHasDeclinedDelete()) {
+			$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID());
 		}
+	}
+
+	public function updateRecord($recordID) {
+		$record = $this->facade->getRecord($recordID);
+		$this->facade->updateRecord($record);
 	}
 
 	public function addRecord() {

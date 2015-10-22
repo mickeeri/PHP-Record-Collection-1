@@ -21,6 +21,8 @@ class NewRecordView {
 	private $successMessage = "";
 	public $isRecordSaved = false;
 
+	private $record;
+
 	function __construct() {
 
 	}
@@ -43,42 +45,107 @@ class NewRecordView {
 	 * Renders form for new record.
 	 */
 	private function getNewRecordForm() {
+		$header = "";
+
+		if ($this->isUpdate()) {
+			$header = "Uppdatera album";
+		} else {
+			$header = "Lägg till ny skiva";
+		}
+
+
 		return '
-			<h2>Lägg till ny skiva</h2>
+			<h2>'. $header . '</h2>
 			' . $this->showErrorMessage() . '
 			' . $this->showSuccessMessage() . '
-			<form method="post" enctype="multipart/form-data">
-				<div class="form-group">
-					<label for="' . self::$titleInputId . '">Titel</label>
-					<input type="text" class="form-control" name ="' . self::$titleInputId . '" id="' . self::$titleInputId . '" placeholder="Titel">
-				</div>
-				<div class="form-group">
-					<label for="' . self::$artistInputId . '">Artist</label>
-					<input type="text" class="form-control" name ="' . self::$artistInputId . '" id="' . self::$artistInputId . '" placeholder="Artist">
-				</div>
+			<form method="post" enctype="multipart/form-data">'.
+				
+				$this->getInputField("Titel", self::$titleInputId, "text") .
+				$this->getInputField("Artist", self::$artistInputId, "text") .
+				$this->getInputField("Utgivningsår", self::$releaseYearInputId, "text") .
+				$this->getInputField("Om", self::$descriptionInputId, "textarea") .
+				$this->getInputField("Pris", self::$priceInputId, "text") .
+				$this->getInputField("Ladda upp omslag", self::$coverInputId, "file") 
 
-				<div class="form-group">
-					<label for="' . self::$releaseYearInputId . '">Realseår</label>
-					<input type="text" class="form-control" name ="' . self::$releaseYearInputId . '" id="' . self::$releaseYearInputId . '" placeholder="Releaseår">
-				</div>
 
-				<div class="form-group">
-					<label for="' . self::$descriptionInputId . '">Beskrivning</label>
-					<textarea rows="3" class="form-control" name ="' . self::$descriptionInputId . '" id="' . self::$descriptionInputId . '" placeholder="Beskrivning"></textarea>
-				</div>
 
-				<div class="form-group">
-					<label for="' . self::$priceInputId . '">Pris</label>
-					<input type="text" class="form-control" name ="' . self::$priceInputId . '" id="' . self::$priceInputId . '" placeholder="Pris">
-				</div>
 
-				<div class="form-group">
-					<label for="' . self::$coverInputId . '">Upload cover</label>
-					<input type="file" class="form-control" name ="' . self::$coverInputId . '" id="' . self::$coverInputId . '" value="Upload">
-				</div>
-				<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Spara">
+				// <div class="form-group">
+				// 	<label for="' . self::$descriptionInputId . '">Beskrivning</label>
+				// 	<textarea rows="3" class="form-control" name ="' . self::$descriptionInputId . '" 
+				// 	id="' . self::$descriptionInputId . '" placeholder="Beskrivning"></textarea>
+				// </div>
+
+
+				// <div class="form-group">
+				// 	<label for="' . self::$coverInputId . '">Upload cover</label>
+				// 	<input type="file" class="form-control" name ="' . self::$coverInputId . '" 
+				// 	id="' . self::$coverInputId . '" value="Upload">
+				// </div>
+				.'<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Spara">
 			</form>
 		';
+	}
+
+	/**
+	 * Renders text fields for user input.
+	 * @param  string $title input value
+	 * @param  string $name  input name and id
+	 */
+	private function getInputField($title, $name, $type){
+
+		$value = $this->getPostField($name);
+		
+		return "
+			<div class='form-group'>
+				<label for='$name'>$title</label>
+				<input class='form-control' id='$name' type='$type' value='$value' name='$name' placeholder='$title'>
+			</div>
+			";
+	}
+
+
+	/**
+	 * Get value of specific field.
+	 * @param  string $field fields name
+	 * @return string        field value
+	 */
+	private function getPostField($field){
+		if ($this->isUpdate()) {
+			
+			if ($field === self::$titleInputId) {
+				return trim($this->record->getTitle());
+			}
+
+			if ($field === self::$artistInputId) {
+				return trim($this->record->getArtist());
+			}
+
+			if ($field === self::$releaseYearInputId) {
+				return trim($this->record->getReleaseYear());
+			}
+
+			if ($field === self::$descriptionInputId) {
+				return trim($this->record->getDescription());
+			}
+
+			if ($field === self::$priceInputId) {
+				return trim($this->record->getPrice());
+			}
+
+			// if ($field === self::$coverInputId) {
+			// 	return trim($this->record->getCoverFilePath());
+			// }
+		}
+
+
+
+
+		if (isset($_POST[$field])) {			
+			// Trims and removes special chars. 
+			return filter_var(trim($_POST[$field]), FILTER_SANITIZE_STRING);
+		}
+		return  "";
 	}
 
 	/**
@@ -147,54 +214,15 @@ class NewRecordView {
 		return null;
 	}
 
-	// /**
-	//  * Upload files 
-	//  * https://github.com/phpmasterdotcom/FileUploadsWithPHP
-	//  * @param  [type] $pic [description]
-	//  * @return [type]      [description]
-	//  */
-	// public function uploadCover($pic) {
+	public function setRecord($record) {
+		$this->record = $record;
+	}
 
-
-	// 	// Check if empty
-	// 	// if (empty($_FILES[self::$coverInputId])){
-	// 	// 	throw 
-	// 	// }
-
-	// 	$myFile = $pic;
-
-	//     if ($myFile["error"] !== UPLOAD_ERR_OK) {
-	//         echo "<p>An error occurred.</p>";
-	//         exit;
-	//     }
-
-	//     // verify the file type
-	//     $fileType = exif_imagetype($myFile["tmp_name"]);
-	//     $allowed = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
-	//     if (!in_array($fileType, $allowed)) {
-	//         echo "<p>File type is not permitted.</p>";
-	//         exit;
-	//     }
-
-	//     // ensure a safe filename
-	//     $name = preg_replace("/[^A-Z0-9._-]/i", "_", $myFile["name"]);
-	//     // don't overwrite an existing file
-	//     $i = 0;
-	//     $parts = pathinfo($name);
-	//     while (file_exists(Settings::PIC_UPLOAD_DIR . $name)) {
-	//         $i++;
-	//         $name = $parts["filename"] . "-" . $i . "." . $parts["extension"];
-	//     }
-	    
-	//     // preserve file from temporary directory
-	//     $success = move_uploaded_file($myFile["tmp_name"], Settings::PIC_UPLOAD_DIR . $name);
-	//     if (!$success) {
-	//         echo "<p>Unable to save file.</p>";
-	//         exit;
-	//     }
-	    
-	//     // set proper permissions on the new file
-	//     chmod(Settings::PIC_UPLOAD_DIR . $name, 0644);
-	//     echo "<p>Uploaded file saved as " . $name . ".</p>";
-	// }
+	private function isUpdate() {
+		if ($this->record === null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }

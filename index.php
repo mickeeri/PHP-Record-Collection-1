@@ -29,7 +29,6 @@ $lv->render($nv, $view);
 
 /**
  * TODO
- * Ta bort skiva
  * Uppdatera skiva
  * MessageView
  */

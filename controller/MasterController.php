@@ -44,18 +44,30 @@ class MasterController {
 	 * Selects views and controllers based on input.
 	 */
 	public function handleInput() {
+		// CREATE
 		if ($this->navigationView->onNewRecordPage()) {
 			$this->view = new \view\NewRecordView();
 			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
 			$controller->addRecord();			
 		} 
+
+		// UPDATE
+		elseif ($this->navigationView->onUpdateRecordPage()) {
+			$this->view = new \view\NewRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);			
+			$recordID = $this->navigationView->getRecordToShow();
+			$controller->getRecord($recordID);						
+			$controller->updateRecord($recordID);	
+		}
 		
+		// READ ALL
 		elseif ($this->navigationView->onRecordListPage()) {
 			$this->view = new \view\IndexRecordView();
 			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
 			$controller->getRecords();
 		} 
 
+		// READ ONE
 		elseif ($this->navigationView->onRecordShowPage()) {
 			
 			$this->view = new \view\ShowRecordView();
@@ -64,6 +76,7 @@ class MasterController {
 			$controller->getRecord($recordID);			
 		}
 
+		// DELETE
 		elseif ($this->navigationView->onDeleteRecordPage()) {
 			$this->view = new \view\ShowRecordView();
 			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
@@ -71,6 +84,7 @@ class MasterController {
 			$controller->deleteRecord($recordID);
 		}
 		
+		// HOME PAGE
 		else {
 			$controller = new \controller\HomeController();
 			$this->view = new \view\HomeView();

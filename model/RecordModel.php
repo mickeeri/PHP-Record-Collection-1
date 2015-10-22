@@ -92,7 +92,13 @@ class Record {
 		return $this->cover;
 	}
 
+	/**
+	 * [validateAndSaveCoverFile description]
+	 * @param  [type] $image [description]
+	 * @return [type]        [description]
+	 */
 	private function validateAndSaveCoverFile($image) {
+
 		// http://www.sitepoint.com/file-uploads-with-php/
 		
 		var_dump($image["error"]);

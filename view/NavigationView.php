@@ -6,8 +6,9 @@ class NavigationView {
 
 	private static $newRecordURL = "nyskiva";
 	public static $recordListURL = "skivlista";
-	private static $recordShowURL = "record";
+	public static $recordShowURL = "record";
 	private static $deleteLinkURL = "deleterecord";
+	private static $updateLinkURL = "uppdateraskiva";
 
 	// TODO: Make non static.
 	private static $newRecordLinkClass = "not-active";
@@ -46,17 +47,25 @@ class NavigationView {
 		return isset($_GET[self::$deleteLinkURL]);
 	}
 
+	public function onUpdateRecordPage() {
+		return isset($_GET[self::$updateLinkURL]);
+	}
+
 
 	/**
 	 * Provides record ID from the URL
 	 * @return string recordID
 	 */
 	public function getRecordToShow() {
+		
 		if ($this->onRecordShowPage()) {
 			return (int)$_GET[self::$recordShowURL];
 		} elseif ($this->onDeleteRecordPage()) {
 			return (int)$_GET[self::$deleteLinkURL];
+		} elseif ($this->onUpdateRecordPage()) {
+			return (int)$_GET[self::$updateLinkURL];
 		}
+		
 	}
 
 	private function setAsActive() {
@@ -88,7 +97,7 @@ class NavigationView {
 		if (isset($_SESSION[self::$sessionSaveLocation])) {
 			$message = $_SESSION[self::$sessionSaveLocation];
 			unset($_SESSION[self::$sessionSaveLocation]);
-			
+
 			return '
 			<div class="alert alert-success" role="alert">
 				' . $message . '

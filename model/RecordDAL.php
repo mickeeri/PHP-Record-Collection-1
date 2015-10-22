@@ -30,8 +30,30 @@ class RecordDAL {
 		$cover = $recordToBeAdded->getCoverFilePath();
 
 		$stmt->bind_param('ssssds', $title, $artist, $releaseYear, $description, $price, $cover);
+		
 		$stmt->execute();
+	}
 
+	public function updateRecord(\model\Record $recordToBeUpdated) {
+		/// UPDATE `phpassignment`.`record` SET `artist` = 'Bruce Springsteen' WHERE `record`.`recordID` = 19;
+
+		$stmt = $this->database->prepare("UPDATE record SET title=?, artist=?, releaseYear=?, description=?, price=?, cover=? WHERE recordID=?");
+
+		if ($stmt === false) {
+			throw new \Exception($this->database->error);
+		}
+
+		$stmt->bind_param('issssds', $recordID, $title, $artist, $releaseYear, $description, $price, $cover);
+
+		$recordID = $recordToBeUpdated->getRecordID();
+		$title = $recordToBeUpdated->getTitle();
+		$artist = $recordToBeUpdated->getArtist();
+		$releaseYear = $recordToBeUpdated->getReleaseYear();
+		$description = $recordToBeUpdated->getDescription();
+		$price = $recordToBeUpdated->getPrice();
+		$cover = $recordToBeUpdated->getCoverFilePath();
+
+		$stmt->execute();
 	}
 
 	/**
@@ -98,7 +120,5 @@ class RecordDAL {
 		$stmt->execute();		
 	}
 
-	public function updateRecord() {
-		
-	}
+
 }
