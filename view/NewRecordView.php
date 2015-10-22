@@ -3,11 +3,10 @@
 namespace view;
 
 /**
-* 
+* Class used for both registration of new record but also to update existing records.
 */
 class NewRecordView {
-	
-	
+		
 	//private $errorMessageArray = array();
 	private static $titleInputId = "title";
 	private static $artistInputId = "artist";
@@ -20,6 +19,7 @@ class NewRecordView {
 	private $errorMessage = "";
 	private $successMessage = "";
 	public $isRecordSaved = false;
+	//public $isRecordUpdated = false;
 
 	private $record;
 
@@ -45,14 +45,12 @@ class NewRecordView {
 	 * Renders form for new record.
 	 */
 	private function getNewRecordForm() {
-		$header = "";
 
 		if ($this->isUpdate()) {
 			$header = "Uppdatera album";
 		} else {
 			$header = "Lägg till ny skiva";
 		}
-
 
 		return '
 			<h2>'. $header . '</h2>
@@ -94,7 +92,13 @@ class NewRecordView {
 	 */
 	private function getInputField($title, $name, $type){
 
-		$value = $this->getPostField($name);
+		// Get the value from current object if update otherwise textfields should be empty.
+		if ($this->isUpdate()) {
+			$value = $this->getPostField($name);
+		} else {
+			$value = "";
+		}
+		
 		
 		return "
 			<div class='form-group'>
@@ -115,21 +119,13 @@ class NewRecordView {
 			
 			if ($field === self::$titleInputId) {
 				return trim($this->record->getTitle());
-			}
-
-			if ($field === self::$artistInputId) {
+			} if ($field === self::$artistInputId) {
 				return trim($this->record->getArtist());
-			}
-
-			if ($field === self::$releaseYearInputId) {
+			} if ($field === self::$releaseYearInputId) {
 				return trim($this->record->getReleaseYear());
-			}
-
-			if ($field === self::$descriptionInputId) {
+			} if ($field === self::$descriptionInputId) {
 				return trim($this->record->getDescription());
-			}
-
-			if ($field === self::$priceInputId) {
+			} if ($field === self::$priceInputId) {
 				return trim($this->record->getPrice());
 			}
 
@@ -141,17 +137,18 @@ class NewRecordView {
 
 
 
-		if (isset($_POST[$field])) {			
-			// Trims and removes special chars. 
-			return filter_var(trim($_POST[$field]), FILTER_SANITIZE_STRING);
-		}
-		return  "";
+		// if (isset($_POST[$field])) {			
+		// 	// Trims and removes special chars. 
+		// 	return filter_var(trim($_POST[$field]), FILTER_SANITIZE_STRING);
+		// }
+		// return  "";
 	}
 
 	/**
 	 * Returns div with error message if there is one.
 	 */
 	private function showErrorMessage() {
+		
 		if ($this->errorMessage === "") {
 			return false;
 		}
@@ -166,6 +163,7 @@ class NewRecordView {
 	}
 
 	private function showSuccessMessage() {
+		
 		if ($this->successMessage === "") {
 			return false;
 		}
@@ -182,21 +180,35 @@ class NewRecordView {
 	/**
 	 * @return boolean true if user has pressed submit button.
 	 */
-	public function userWantsToAddRecord() {
+	public function userWantsToSaveRecord() {
 		return isset($_POST[self::$submitPostId]);
 	}
 
 	public function getNewRecord() {
 		
+
 		$title = $_POST[self::$titleInputId];
 		$artist = $_POST[self::$artistInputId];
 		$releaseYear = $_POST[self::$releaseYearInputId];
 		$description = $_POST[self::$descriptionInputId];
 		$price = $_POST[self::$priceInputId];
-		$cover = $_FILES[self::$coverInputId];
 		
-		try {				
-			return new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+		if ($this->isUpdate()) {
+			// TODO: Gör så att man kan byta bild.
+			$cover = $this->record->getCoverFilePath();
+			$recordID = $this->record->getRecordID();
+		} else {
+			$cover = $_FILES[self::$coverInputId];
+			$recordID = null;
+		}
+				
+		try {							
+			
+			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+			$record->setRecordID($recordID);
+
+			return $record;
+
 		} catch (\model\NoTitleException $e) {
 			$this->errorMessage = "Title is missing";
 		} catch (\model\NoArtistException $e) {
@@ -214,8 +226,16 @@ class NewRecordView {
 		return null;
 	}
 
+	/**
+	 * Controller sets private member record to current record based on id in url.
+	 * @param \model\Record $record record to update, null if new album 
+	 */
 	public function setRecord($record) {
 		$this->record = $record;
+	}
+
+	public function setErrorMessage($message) {
+		$this->errorMessage = $message;
 	}
 
 	private function isUpdate() {

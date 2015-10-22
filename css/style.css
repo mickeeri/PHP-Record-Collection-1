@@ -9,3 +9,7 @@
 .content {
 	padding: 20px 10px;
 }
+
+.thumbnail {
+	max-width: 300px;
+}

@@ -31,5 +31,6 @@ $lv->render($nv, $view);
  * TODO
  * Uppdatera skiva
  * MessageView
+ * Skapa mapp för filer om den inte finns.
  */
 

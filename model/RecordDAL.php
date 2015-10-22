@@ -14,6 +14,7 @@ class RecordDAL {
 
 	public function add(\model\Record $recordToBeAdded) {
 
+		// TODO: Förenkla prepeare statement.
 		$stmt = $this->database->prepare("INSERT INTO `" . \DbSettings::DATABASE .  "`.`" . self::$recordTable . "`(
 			`title`, `artist`, `releaseYear`, `description`, `price`, `cover`) 
 				VALUES (?, ?, ?, ?, ?, ?)");
@@ -37,13 +38,16 @@ class RecordDAL {
 	public function updateRecord(\model\Record $recordToBeUpdated) {
 		/// UPDATE `phpassignment`.`record` SET `artist` = 'Bruce Springsteen' WHERE `record`.`recordID` = 19;
 
-		$stmt = $this->database->prepare("UPDATE record SET title=?, artist=?, releaseYear=?, description=?, price=?, cover=? WHERE recordID=?");
+		$stmt = $this->database->prepare("UPDATE " . self::$recordTable . " SET title=?, artist=?, releaseYear=?, 
+			description=?, price=?, cover=? WHERE recordID=?");
+
+		var_dump($stmt);
 
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
 		}
 
-		$stmt->bind_param('issssds', $recordID, $title, $artist, $releaseYear, $description, $price, $cover);
+		$stmt->bind_param('ssssdsi', $title, $artist, $releaseYear, $description, $price, $cover, $recordID);
 
 		$recordID = $recordToBeUpdated->getRecordID();
 		$title = $recordToBeUpdated->getTitle();
@@ -83,6 +87,35 @@ class RecordDAL {
 		return $records;
 	}
 
+	public function getLatestRecords() {
+		// SELECT * from `record` ORDER BY `recordID` DESC LIMIT 2
+
+		$latestRecords = array();
+
+		$stmt = $this->database->prepare("SELECT * FROM record ORDER BY recordID DESC LIMIT 4");
+		
+		if ($stmt === false) {
+			throw new \Exception($this->database->error);
+		}
+
+		//$stmt->bind_param("i", $recordID);
+
+		$stmt->execute();
+
+		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price, $cover);
+
+		while ($stmt->fetch()) {
+			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+			$record->setRecordID($recordID);
+			$latestRecords[] = $record;
+		}
+
+		// TODO kasta undantag om tom array.
+
+		return $latestRecords;
+	}
+
+
 	/**
 	 * Fetches one record from database.
 	 * @param  [type] $recordID [description]
@@ -119,6 +152,7 @@ class RecordDAL {
 		$stmt->bind_param("i", $recordID);
 		$stmt->execute();		
 	}
+
 
 
 }

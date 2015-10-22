@@ -100,9 +100,7 @@ class Record {
 	private function validateAndSaveCoverFile($image) {
 
 		// http://www.sitepoint.com/file-uploads-with-php/
-		
-		var_dump($image["error"]);
-
+	
 		if ($image["error"] !== UPLOAD_ERR_OK) {
 			throw new \Exception();
 		}

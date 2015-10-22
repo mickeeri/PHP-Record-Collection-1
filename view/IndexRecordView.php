@@ -49,6 +49,7 @@ class IndexRecordView {
 		$ret = '';
 
 		foreach ($this->records as $record) {
+			//TODO: String dep record.
 			$ret .= '
 				<tr>
 					<td><a href="?record=' . $record->getRecordID() . '">' . $record->getTitle() . '</a></td>

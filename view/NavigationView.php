@@ -65,13 +65,13 @@ class NavigationView {
 		} elseif ($this->onUpdateRecordPage()) {
 			return (int)$_GET[self::$updateLinkURL];
 		}
-		
+
 	}
 
 	private function setAsActive() {
 		if($this->onNewRecordPage()) {
 			self::$newRecordLinkClass = "active";
-		} elseif ($this->onRecordListPage() || $this->onRecordShowPage() || $this->onDeleteRecordPage()) {
+		} elseif ($this->onRecordListPage() || $this->onRecordShowPage() || $this->onDeleteRecordPage() || $this->onUpdateRecordPage()) {
 			self::$recordListLinkClass = "active";
 		} else {
 			self::$homeLinkClass = "active";

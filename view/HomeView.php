@@ -7,6 +7,8 @@ namespace view;
 */
 class HomeView {
 	
+	private $latestRecords = array();
+
 	function __construct() {
 		
 	}
@@ -16,12 +18,46 @@ class HomeView {
 	}
 
 	private function getHTML() {
+		return '
+			<h2>Senaste skivorna</h2>
+			<div class="row">
+				' . $this->getThumbnails() . '
+			</div>
+		';
 		
 
+	}
 
+	private function getThumbnails() {
+		$ret = '';
 
-		return "
-			<h4>Välkommen till startsidan</h4>	
-		";
+		foreach ($this->latestRecords as $record) {
+			$ret .= '
+				<div class="col-sm-6 col-md-3">
+					<div class="thumbnail">
+						<img src="' . \Settings::PIC_UPLOAD_DIR.$record->getCoverFilePath() . '" alt="Omslagsbild">
+						<div class="caption">
+							<h3>' . $record->getTitle() . '</h3>
+							<h4>' . $record->getArtist() . '</h4>
+							<p>' . $record->getDescription() . '</p>
+							<p>
+							
+							<a href="#" class="btn btn-danger" role="button">Köp</a> 
+							<a href="?'. \view\NavigationView::$recordShowURL . '=' . $record->getRecordID() . '"" 
+							class="btn btn-default" role="button">Mer info</a>
+
+							</p>				
+						</div>
+					</div>
+				</div>
+			';
+		}
+
+		return $ret;
+	}
+
+	public function setLatestRecords($recordArray) {
+		$this->latestRecords = $recordArray;
 	}
 }
+

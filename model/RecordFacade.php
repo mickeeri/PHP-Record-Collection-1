@@ -14,17 +14,25 @@ class RecordFacade {
 	}
 
 	public function saveRecord(\model\Record $recordToBeAdded) {
-		
-		$this->dal->add($recordToBeAdded);
+		//var_dump($recordToBeAdded);
+
+		// If id is null record does not exists in db. 
+		if ($recordToBeAdded->getRecordID() === null) {
+			$this->dal->add($recordToBeAdded);
+		} 
+		// Otherwise youst wants to be updated.
+		else {
+			$this->dal->updateRecord($recordToBeAdded);
+		}		
 	}
 
 	public function getRecords() {
 		return $this->dal->getRecords();
 	}
 
-	public function updateRecord($record) {
-		$this->dal->updateRecord($record);
-	}
+	// public function updateRecord($record) {
+	// 	$this->dal->updateRecord($record);
+	// }
 
 	public function removeRecord(\model\Record $record) {
 		// Removes cover image from directory.
@@ -37,5 +45,9 @@ class RecordFacade {
 
 	public function getRecord($id) {
 		return $this->dal->getRecordById($id);
+	}
+
+	public function getLatestRecords() {
+		return $this->dal->getLatestRecords();
 	}
 }

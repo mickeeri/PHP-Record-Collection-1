@@ -32,7 +32,7 @@ class RecordController {
 		if($this->view->userHasConfirmedDelete()) {
 			$recordTitle = $record->getTitle();
 			$this->facade->removeRecord($record);
-			$this->navigationView->redirect(\view\NavigationView::$recordListURL, $recordTitle . "har raderats.");
+			$this->navigationView->redirect(\view\NavigationView::$recordListURL, $recordTitle . " har raderats.");
 		} elseif ($this->view->userHasDeclinedDelete()) {
 			$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID());
 		}
@@ -40,12 +40,31 @@ class RecordController {
 
 	public function updateRecord($recordID) {
 		$record = $this->facade->getRecord($recordID);
-		$this->facade->updateRecord($record);
+
+		// If user has pressed submit button.
+		if ($this->view->userWantsToSaveRecord()) {				
+			
+			$record = $this->view->getNewRecord();
+
+			if ($record !== null) {
+				try {
+					$this->facade->saveRecord($record);
+					$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID(), 
+						"Albumet har uppdaterats.");
+				} catch (\Exception $e) {
+					//var_dump($e->getMessage());
+					$this->view->setErrorMessage("Något gick fel.");
+				}
+			}
+		}
+
+
+		//$this->facade->updateRecord($record);
 	}
 
 	public function addRecord() {
 		// If user has pressed submit button.
-		if ($this->view->userWantsToAddRecord()) {				
+		if ($this->view->userWantsToSaveRecord()) {				
 			
 			$record = $this->view->getNewRecord();
 
@@ -54,7 +73,7 @@ class RecordController {
 					$this->facade->saveRecord($record);
 					$this->view->isRecordSaved = true;
 				} catch (\Exception $e) {
-					// Do something.
+					$this->view->setErrorMessage("Något gick fel.");
 				}
 			}
 		}

@@ -86,8 +86,9 @@ class MasterController {
 		
 		// HOME PAGE
 		else {
-			$controller = new \controller\HomeController();
 			$this->view = new \view\HomeView();
+			$controller = new \controller\HomeController($this->view, $this->navigationView, $this->recordFacade);		
+			$controller->doHome();
 		}
 
 		$this->mysqli->close();		
