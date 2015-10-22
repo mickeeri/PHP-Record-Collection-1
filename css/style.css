@@ -1,3 +1,12 @@
-.container {
-
+.media {
+	padding: 45px 0 0 30px;
 }
+
+.media-object {
+	max-width: 325px;
+}
+
+.nav {
+	margin-bottom: 30px;
+}
+

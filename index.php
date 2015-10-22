@@ -17,10 +17,20 @@ $mc = new \controller\MasterController($nv);
 
 $mc->handleInput();
 
+
+
 // Deside which view is to be rendered based on handleInput();
 $view = $mc->generateOutput();
 
 $lv = new \view\LayoutView();
 
 $lv->render($nv, $view);
+
+
+/**
+ * TODO
+ * Ta bort skiva
+ * Uppdatera skiva
+ * MessageView
+ */
 

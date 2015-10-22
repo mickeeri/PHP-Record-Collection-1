@@ -6,10 +6,12 @@ class RecordController {
 	
 	private $view;
 	private $facade; 
+	private $navigationView;
 
-	function __construct($view, \model\RecordFacade $rf) {
+	function __construct($view, \view\NavigationView $nv, \model\RecordFacade $rf) {
 		$this->view = $view;
 		$this->facade = $rf;
+		$this->navigationView = $nv;
 	}
 
 	public function getRecords() {
@@ -20,6 +22,18 @@ class RecordController {
 	public function getRecord($recordID) {
 		$record = $this->facade->getRecord($recordID);
 		$this->view->setRecord($record);
+	}
+
+	public function deleteRecord($recordID) {
+		$record = $this->facade->getRecord($recordID);
+		$this->view->setRecord($record);
+		$this->view->setUserWantsToDeleteRecord();
+
+		if($this->view->userHasConfirmedDelete()) {
+			$recordTitle = $record->getTitle();
+			$this->facade->removeRecord($record);
+			$this->navigationView->redirect(\view\NavigationView::$recordListURL, $recordTitle . "har raderats.");
+		}
 	}
 
 	public function addRecord() {

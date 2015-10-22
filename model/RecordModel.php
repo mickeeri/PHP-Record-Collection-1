@@ -43,13 +43,16 @@ class Record {
 		// }
 		// 
 		
-
-		
-		// Calls method to save and store picture file. Method returns name of file.
-		$this->cover = $this->validateAndSaveCoverFile($cover);
-
-		var_dump($this->cover);
-
+		/**
+		 * Check if $cover is simple string (file path) and therefore already in database. 
+		 * Otherwise image file needs validation and to be saved to folder.
+		 */
+		if (is_string($cover) === false) {
+			// Calls method to save and store picture file. Method returns name of file.
+			$cover = $this->validateAndSaveCoverFile($cover);
+		} 
+				
+		$this->cover = $cover;
 		$this->title = $title;
 		$this->artist = $artist;
 		$this->releaseYear = $releaseYear;
@@ -85,7 +88,14 @@ class Record {
 		return $this->price;
 	}
 
+	public function getCoverFilePath() {
+		return $this->cover;
+	}
+
 	private function validateAndSaveCoverFile($image) {
+		// http://www.sitepoint.com/file-uploads-with-php/
+		
+		var_dump($image["error"]);
 
 		if ($image["error"] !== UPLOAD_ERR_OK) {
 			throw new \Exception();

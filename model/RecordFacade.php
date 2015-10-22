@@ -22,8 +22,13 @@ class RecordFacade {
 		return $this->dal->getRecords();
 	}
 
-	public function removeRecord() {
-		// NOt implemented.
+	public function removeRecord(\model\Record $record) {
+		// Removes cover image from directory.
+		$filename = \Settings::PIC_UPLOAD_DIR . $record->getCoverFilePath();
+		unlink($filename);
+
+		// Removes entry in the database.
+		$this->dal->removeRecord($record->getRecordID());
 	}
 
 	public function getRecord($id) {

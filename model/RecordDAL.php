@@ -15,8 +15,8 @@ class RecordDAL {
 	public function add(\model\Record $recordToBeAdded) {
 
 		$stmt = $this->database->prepare("INSERT INTO `" . \DbSettings::DATABASE .  "`.`" . self::$recordTable . "`(
-			`title`, `artist`, `releaseYear`, `description`, `price`) 
-				VALUES (?, ?, ?, ?, ?)");
+			`title`, `artist`, `releaseYear`, `description`, `price`, `cover`) 
+				VALUES (?, ?, ?, ?, ?, ?)");
 
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
@@ -27,12 +27,17 @@ class RecordDAL {
 		$releaseYear = $recordToBeAdded->getReleaseYear();
 		$description = $recordToBeAdded->getDescription();
 		$price = $recordToBeAdded->getPrice();
+		$cover = $recordToBeAdded->getCoverFilePath();
 
-		$stmt->bind_param('ssssd', $title, $artist, $releaseYear, $description, $price);
+		$stmt->bind_param('ssssds', $title, $artist, $releaseYear, $description, $price, $cover);
 		$stmt->execute();
 
 	}
 
+	/**
+	 * Fetches all records from database.
+	 * @return array() $records
+	 */
 	public function getRecords() {
 		
 		$records = array();
@@ -45,10 +50,10 @@ class RecordDAL {
 
 		$stmt->execute();
 
-		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price);
+		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price, $cover);
 
 		while ($stmt->fetch()) {
-			$record = new \model\Record($title, $artist, $releaseYear, $description, $price);
+			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
 			$record->setRecordID($recordID);
 			$records[] = $record;
 		}
@@ -56,6 +61,11 @@ class RecordDAL {
 		return $records;
 	}
 
+	/**
+	 * Fetches one record from database.
+	 * @param  [type] $recordID [description]
+	 * @return \model\Record record with given id.
+	 */
 	public function getRecordByID($recordID) {
 		
 		$stmt = $this->database->prepare("SELECT * FROM `" . self::$recordTable . "` WHERE recordID=?");
@@ -68,7 +78,7 @@ class RecordDAL {
 
 		$stmt->execute();
 
-		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price);
+		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price, $cover);
 
 		$stmt->fetch();
 
@@ -76,9 +86,19 @@ class RecordDAL {
 			throw new RecordDontExistException();
 		}
 
-		$record = new \model\Record($title, $artist, $releaseYear, $description, $price);
+		$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
 		$record->setRecordID($recordID);
 
 		return $record;
+	}
+
+	public function removeRecord($recordID) {
+		$stmt = $this->database->prepare("DELETE FROM `" . self::$recordTable . "` WHERE recordID = ?");
+		$stmt->bind_param("i", $recordID);
+		$stmt->execute();		
+	}
+
+	public function updateRecord() {
+		
 	}
 }

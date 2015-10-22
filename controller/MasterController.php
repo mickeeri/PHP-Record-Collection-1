@@ -46,22 +46,29 @@ class MasterController {
 	public function handleInput() {
 		if ($this->navigationView->onNewRecordPage()) {
 			$this->view = new \view\NewRecordView();
-			$controller = new \controller\RecordController($this->view, $this->recordFacade);
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
 			$controller->addRecord();			
 		} 
 		
 		elseif ($this->navigationView->onRecordListPage()) {
 			$this->view = new \view\IndexRecordView();
-			$controller = new \controller\RecordController($this->view, $this->recordFacade);
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
 			$controller->getRecords();
 		} 
 
 		elseif ($this->navigationView->onRecordShowPage()) {
 			
 			$this->view = new \view\ShowRecordView();
-			$controller = new \controller\RecordController($this->view, $this->recordFacade);
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
 			$recordID = $this->navigationView->getRecordToShow();
 			$controller->getRecord($recordID);			
+		}
+
+		elseif ($this->navigationView->onDeleteRecordPage()) {
+			$this->view = new \view\ShowRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+			$recordID = $this->navigationView->getRecordToShow();
+			$controller->deleteRecord($recordID);
 		}
 		
 		else {
