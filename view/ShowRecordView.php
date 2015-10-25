@@ -5,7 +5,7 @@ namespace view;
 class ShowRecordView {
 
 	private $record;
-	private $recordRating;
+	//private $recordRating = $record->getRating();
 
 	private $userWantsToDeleteRecord = false;
 
@@ -14,13 +14,14 @@ class ShowRecordView {
 	private static $declineDeleteRecordID = "declinedelete";
 	private static $updateLinkID = "uppdateraskiva";
 
-	// Rating input button names.
+	// Rating submit button names.
 	private static $submitRating1ID = "rating1";
 	private static $submitRating2ID = "rating2";
 	private static $submitRating3ID = "rating3";
 	private static $submitRating4ID = "rating4";
 	private static $submitRating5ID = "rating5";
 
+	// If album does not have rating the css class of the buttons is default.
 	private $submitRating1CssClass = "default";
 	private $submitRating2CssClass = "default";
 	private $submitRating3CssClass = "default";
@@ -28,7 +29,7 @@ class ShowRecordView {
 	private $submitRating5CssClass = "default";
 
 
-	public $hasJustBeenRated = false;
+	//public $hasJustBeenRated = false;
 
 	function __construct() {
 		# code...
@@ -37,7 +38,7 @@ class ShowRecordView {
 	public function response() {
 
 		// Check if record has rating.
-		if ($this->recordRating !== null) {
+		if ($this->record->getRating() !== null) {
 			$this->displayCurrentRating();
 		}
 		
@@ -91,54 +92,54 @@ class ShowRecordView {
 	 * the current score. 
 	 */
 	private function displayCurrentRating() {
-		if ($this->recordRating === 1) {
+		
+		if ($this->record->getRating() === 1) {
 			$this->submitRating1CssClass = "primary";
 		}
 
-		if ($this->recordRating === 2) {
+		if ($this->record->getRating() === 2) {
 			$this->submitRating2CssClass = "primary";
 		}
 
-		if ($this->recordRating === 3) {
+		if ($this->record->getRating() === 3) {
 			$this->submitRating3CssClass = "primary";
 		}
 
-		if ($this->recordRating === 4) {
+		if ($this->record->getRating() === 4) {
 			$this->submitRating4CssClass = "primary";
 		}
 
-		if ($this->recordRating === 5) {
+		if ($this->record->getRating() === 5) {
 			$this->submitRating5CssClass = "primary";
 		}
 	}
 
+	// private function buildRatingLinks() {
+	// 	$ret = '';
 
+	// 	// for ($i=1; $i <= 5; $i++) { 
+	// 	// 	$ret .= '
+	// 	// 		<a href="?' . \view\NavigationView::$recordShowURL . '=' . $this->record->getRecordID() . '?' . 
+	// 	// 			\view\NavigationView::$ratingLinkID . '=' . $i . '">' . $i .'</a>
+	// 	// 	';
+	// 	// }
+	// 	// 
+	// 	for ($i=1; $i <= 5; $i++) { 
+	// 		$ret .= '
+	// 			<a href="?' . \view\NavigationView::$ratingLinkID . '=' . $i . '">' . $i .'</a>
+	// 		';
+	// 	}
 
-	private function buildRatingLinks() {
-		$ret = '';
-
-		// for ($i=1; $i <= 5; $i++) { 
-		// 	$ret .= '
-		// 		<a href="?' . \view\NavigationView::$recordShowURL . '=' . $this->record->getRecordID() . '?' . 
-		// 			\view\NavigationView::$ratingLinkID . '=' . $i . '">' . $i .'</a>
-		// 	';
-		// }
-		// 
-		for ($i=1; $i <= 5; $i++) { 
-			$ret .= '
-				<a href="?' . \view\NavigationView::$ratingLinkID . '=' . $i . '">' . $i .'</a>
-			';
-		}
-
-		return $ret;
-	}
+	// 	return $ret;
+	// }
 
 
 
 	private function deleteRecordConfirmation() {
 		$ret = '
 			<div class="alert alert-warning" role="alert">
-				<p>Är du säker på att du vill ta bort <strong>' . $this->record->getTitle() . ' av ' . $this->record->getArtist() . '</strong></p>
+				<p>Är du säker på att du vill ta bort <strong>' . $this->record->getTitle() . ' av ' . 
+					$this->record->getArtist() . '</strong></p>
 			</div>
 			<form method="post">
 				<input class="btn btn-danger" name="' . self::$confirmDeleteRecordID . '" type="submit" value="Ja">
@@ -175,9 +176,8 @@ class ShowRecordView {
 	 * @return int score, null if no rating is given.
 	 */
 	public function getSubmittedRecordRating() {
+
 		if (isset($_POST[self::$submitRating1ID])) {
-			
-		} elseif (isset($_POST[self::$submitRating1ID])) {
 			
 			return (int)$_POST[self::$submitRating1ID];
 

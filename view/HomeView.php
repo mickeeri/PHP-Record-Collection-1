@@ -24,8 +24,6 @@ class HomeView {
 				' . $this->getThumbnails() . '
 			</div>
 		';
-		
-
 	}
 
 	private function getThumbnails() {

@@ -23,17 +23,6 @@ class RecordController {
 		$record = $this->facade->getRecord($recordID);		
 		// Set record in ShowRecordView.
 		$this->view->setRecord($record);
-
-
-
-		if ($this->facade->getRecordRating($record) !== null) {
-			 
-			$this->view->setRecordRating($this->facade->getRecordRating($record));
-		}
-
-		// if ($this->view->hasJustBeenRated) {
-		// 	$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID());
-		// }
 		
 		// If user wants to rate record.
 		if ($this->view->getSubmittedRecordRating() !== null) {
@@ -65,6 +54,7 @@ class RecordController {
 
 	public function updateRecord($recordID) {
 		$record = $this->facade->getRecord($recordID);
+		$this->view->setRecord($record);
 
 		// If user has pressed submit button.
 		if ($this->view->userWantsToSaveRecord()) {				
@@ -81,9 +71,6 @@ class RecordController {
 				}
 			}
 		}
-
-
-		//$this->facade->updateRecord($record);
 	}
 
 	public function addRecord() {

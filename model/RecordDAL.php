@@ -83,6 +83,11 @@ class RecordDAL {
 			$record->setRecordID($recordID);
 			$records[] = $record;
 		}
+
+		// Sets the records rating.
+		foreach ($records as $record) {			
+			$record->setRecordRating($this->getRating($record));
+		}
 		
 		return $records;
 	}
@@ -106,9 +111,12 @@ class RecordDAL {
 
 		while ($stmt->fetch()) {
 			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
-			$record->setRecordID($recordID);
+			$record->setRecordID($recordID);		
 			$latestRecords[] = $record;
 		}
+
+
+		
 
 		// TODO kasta undantag om tom array.
 
@@ -146,6 +154,10 @@ class RecordDAL {
 		
 		$record->setRecordID($recordID);
 
+		$stmt->close();
+
+		$record->setRecordRating($this->getRating($record));
+
 		return $record;
 	}
 
@@ -181,6 +193,7 @@ class RecordDAL {
 		$rating = $rating;
 
 		$stmt->execute();
+
 	}
 
 	/**

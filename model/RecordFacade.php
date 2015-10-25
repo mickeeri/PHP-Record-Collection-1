@@ -57,9 +57,20 @@ class RecordFacade {
 	 * @param int     $rating rating score from 1-5
 	 */
 	public function addRatingToRecord(\model\Record $record, $rating) {
+
 		// If record already has rating.
 		if ($this->getRecordRating($record) !== null) {
-			$this->dal->updateRecordRating($record, $rating);
+			
+			// If user selects score that is already set the rating is removed altogether. 
+			if ($this->getRecordRating($record) === $rating) {
+				$this->dal->removeRating($record->getRecordID());
+			} 
+			// Just update.
+			else {
+				$this->dal->updateRecordRating($record, $rating);
+			}
+
+			
 		} else {
 			$this->dal->addRatingToRecord($record, $rating);
 		}		

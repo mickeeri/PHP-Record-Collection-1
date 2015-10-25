@@ -9,7 +9,7 @@ require_once("view/NewRecordView.php");
 require_once("view/IndexRecordView.php");
 require_once("view/ShowRecordView.php");
 
-require_once("view/order/NewOrderView.php");
+//require_once("view/order/NewOrderView.php");
 
 
 require_once("controller/HomeController.php");
@@ -65,7 +65,7 @@ class MasterController {
 			$this->view = new \view\NewRecordView();
 			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);			
 			$recordID = $this->navigationView->getRecordToShow();
-			$controller->getRecord($recordID);						
+			//$controller->getRecord($recordID);						
 			$controller->updateRecord($recordID);	
 		}
 		

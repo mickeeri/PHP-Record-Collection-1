@@ -33,7 +33,7 @@ class IndexRecordView {
 						<th>Artist</th>
 						<th>Utguvningsår</th>
 						<th>Om</th>
-						<th>Pris</th>
+						<th>Mitt betyg</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -56,7 +56,7 @@ class IndexRecordView {
 					<td>' . $record->getArtist() . '</td>
 					<td>' . $record->getReleaseYear() . '</td>
 					<td>' . $record->getDescription() . '</td>
-					<td>' . $record->getPrice() . ' SEK</td>
+					<td>' . $record->getRating() . '</td>
 				</tr>
 			';
 		}

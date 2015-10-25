@@ -56,9 +56,9 @@ class NavigationView {
 		return isset($_GET[self::$updateLinkURL]);
 	}
 
-	public function onOrderPage() {
-		return isset($_GET[self::$orderLinkID]);
-	}
+	// public function onOrderPage() {
+	// 	return isset($_GET[self::$orderLinkID]);
+	// }
 
 	public function wantsToRateRecord() {		
 		return isset($_GET[self::$ratingLinkID]);
@@ -123,7 +123,7 @@ class NavigationView {
 		// 
 		
 		if ($url != "") {
-			$url = '/?'.$url;
+			$url = '?'.$url;
 		}
 	
 		// Removes index.php from php_self string.
