@@ -10,6 +10,11 @@ class NavigationView {
 	private static $deleteLinkURL = "deleterecord";
 	private static $updateLinkURL = "uppdateraskiva";
 
+
+	// Public static links
+	//public static $orderLinkID = "order";
+	public static $ratingLinkID = "rate";
+
 	// TODO: Make non static.
 	private static $newRecordLinkClass = "not-active";
 	private static $recordListLinkClass = "not-active";
@@ -51,6 +56,14 @@ class NavigationView {
 		return isset($_GET[self::$updateLinkURL]);
 	}
 
+	public function onOrderPage() {
+		return isset($_GET[self::$orderLinkID]);
+	}
+
+	public function wantsToRateRecord() {		
+		return isset($_GET[self::$ratingLinkID]);
+	}
+
 
 	/**
 	 * Provides record ID from the URL
@@ -64,8 +77,27 @@ class NavigationView {
 			return (int)$_GET[self::$deleteLinkURL];
 		} elseif ($this->onUpdateRecordPage()) {
 			return (int)$_GET[self::$updateLinkURL];
+		} elseif ($this->onOrderPage()) {
+			return (int)$_GET[self::$orderLinkID];
+		}
+	}
+
+	public function getRecordRating() {
+		return (int)$_GET[self::$ratingLinkID];
+	}
+
+	public function getCurrentRecordIDFromCookie() {
+		
+		if (isset($_COOKIE["currentrecord"])) {
+			$ret = $_COOKIE["currentrecord"];
+		} else {
+			$ret = "";
 		}
 
+		// Removes cookie.
+		setcookie("currentrecord", "", time() - 1);
+
+		return (int)$ret;
 	}
 
 	private function setAsActive() {
@@ -78,17 +110,37 @@ class NavigationView {
 		}
 	}
 
+	/**
+	 * Redirects to specific url.
+	 * @param  string $url     
+	 * @param  string $message message to be displayed after redirect
+	 */
 	public function redirect($url, $message) {
 		// if ($url === null) {
 		// 	//$url = $_SERVER['PHP_SELF'];			
 		// }
 		// 
-		$url = '/?'.$url;
-
+		// 
+		
+		if ($url != "") {
+			$url = '/?'.$url;
+		}
+	
+		// Removes index.php from php_self string.
+		$path = str_replace("index.php", "", $_SERVER['PHP_SELF']);
+		
 		$_SESSION[self::$sessionSaveLocation] = $message;
-		$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['CONTEXT_PREFIX'].$url;
+		$actual_link = 'http://'.$_SERVER['HTTP_HOST'].$path.$url;
 		header("Location: $actual_link");
 		exit();
+	}
+
+	/**
+	 * Reloads current page.
+	 * @return void
+	 */
+	public function refresh() {
+		header('Location: '.$_SERVER['REQUEST_URI']);
 	}
 
 	public function getHeaderMessage() {

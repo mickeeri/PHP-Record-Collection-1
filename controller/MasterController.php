@@ -9,13 +9,21 @@ require_once("view/NewRecordView.php");
 require_once("view/IndexRecordView.php");
 require_once("view/ShowRecordView.php");
 
+require_once("view/order/NewOrderView.php");
+
 
 require_once("controller/HomeController.php");
 require_once("controller/RecordController.php");
+// require_once("controller/OrderController.php");
 
 require_once("model/RecordModel.php");
 require_once("model/RecordFacade.php");
+
 require_once("model/RecordDAL.php");
+
+// require_once("model/customer/CustomerModel.php");
+// require_once("model/order/OrderDAL.php");
+// require_once("model/order/OrderFacade.php");
 
 require_once("DBSettings.php");
 
@@ -33,10 +41,11 @@ class MasterController {
 
 		$this->navigationView = $navigationView;
 
-		// Record models.
+		// DALS and facades.
 		$this->recordDAL = new \model\RecordDAL($this->mysqli);
+		//$this->orderDAL = new \model\OrderDAL($this->mysqli);
 		$this->recordFacade = new \model\RecordFacade($this->recordDAL);
-
+		//$this->orderFacade = new \model\OrderFacade($this->orderDAL);
 	}
 
 
@@ -83,6 +92,24 @@ class MasterController {
 			$recordID = $this->navigationView->getRecordToShow();
 			$controller->deleteRecord($recordID);
 		}
+
+		elseif ($this->navigationView->wantsToRateRecord()) {
+			$this->view = new \view\ShowRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+			$rating = $this->navigationView->getRecordRating();
+			$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
+			$controller->rateRecord($rating, $recordID);			
+		}
+
+		// // NEW ORDER
+		// elseif ($this->navigationView->onOrderPage()) {
+		// 	$this->view = new \view\NewOrderView();
+		// 	$controller = new \controller\OrderController($this->view, $this->navigationView, $this->orderFacade);
+		// 	$recordID = $this->navigationView->getRecordToShow();	
+		// 	$record =  $this->recordFacade->getRecord($recordID);
+
+		// 	$controller->addRecordToOrder($record);		
+		// }
 		
 		// HOME PAGE
 		else {

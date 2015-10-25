@@ -40,11 +40,12 @@ class HomeView {
 							<h3>' . $record->getTitle() . '</h3>
 							<h4>' . $record->getArtist() . '</h4>
 							<p>' . $record->getDescription() . '</p>
-							<p>
+							<p><strong>' . $record->getPrice() . ' $</strong></p>
 							
-							<a href="#" class="btn btn-danger" role="button">Köp</a> 
+
 							<a href="?'. \view\NavigationView::$recordShowURL . '=' . $record->getRecordID() . '"" 
 							class="btn btn-default" role="button">Mer info</a>
+							<a href="#" class="btn btn-danger" role="button">Köp</a>
 
 							</p>				
 						</div>

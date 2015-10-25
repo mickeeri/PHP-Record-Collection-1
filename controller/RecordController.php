@@ -20,8 +20,33 @@ class RecordController {
 	}
 
 	public function getRecord($recordID) {
-		$record = $this->facade->getRecord($recordID);
+		$record = $this->facade->getRecord($recordID);		
+		// Set record in ShowRecordView.
 		$this->view->setRecord($record);
+
+
+
+		if ($this->facade->getRecordRating($record) !== null) {
+			 
+			$this->view->setRecordRating($this->facade->getRecordRating($record));
+		}
+
+		// if ($this->view->hasJustBeenRated) {
+		// 	$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID());
+		// }
+		
+		// If user wants to rate record.
+		if ($this->view->getSubmittedRecordRating() !== null) {
+						
+			$this->rateRecord($record);
+			
+		}
+	}
+
+	private function rateRecord(\model\Record $recordToRate) {
+		$rating = $this->view->getSubmittedRecordRating();
+		$this->facade->addRatingToRecord($recordToRate, $rating);	
+		$this->navigationView->refresh();
 	}
 
 	public function deleteRecord($recordID) {
@@ -52,7 +77,6 @@ class RecordController {
 					$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID(), 
 						"Albumet har uppdaterats.");
 				} catch (\Exception $e) {
-					//var_dump($e->getMessage());
 					$this->view->setErrorMessage("Något gick fel.");
 				}
 			}
@@ -78,4 +102,17 @@ class RecordController {
 			}
 		}
 	}
+
+	// public function rateRecord($rating, $recordID) {
+		
+	// 	var_dump($rating);
+
+	// 	var_dump($recordID);
+
+	// 	$this->facade->addRatingToRecord($rating, $recordID);
+
+
+	// 	$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$recordID, 
+	// 		"The album has been rated $rating.");
+	// }
 }

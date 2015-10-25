@@ -14,11 +14,11 @@ class LayoutView {
 		        <meta name="viewport" content="width=device-width, initial-scale=1">
 		        <link href="css/style.css" rel="stylesheet">
 		        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">		        
-		        <title>Skivbörsen</title>
+		        <title>My Record Collection</title>
 		  	</head>
 	      	<body>				
 				<div class="container">					
-					<h1>Skivbörsen</h1>
+					<h1>My Record Collection</h1>
 					' . $nv->getNavigationBar() . '
 					<div class="content">
 					' . $nv->getHeaderMessage() . '									       

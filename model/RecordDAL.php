@@ -7,6 +7,8 @@ class RecordDontExistException extends \Exception {};
 class RecordDAL {
 	
 	private static $recordTable = "record";
+	//private static $recordTable = "Record";
+	private static $ratingTable = "rating";
 
 	function __construct(\mysqli $db) {
 		$this->database = $db;
@@ -40,8 +42,6 @@ class RecordDAL {
 
 		$stmt = $this->database->prepare("UPDATE " . self::$recordTable . " SET title=?, artist=?, releaseYear=?, 
 			description=?, price=?, cover=? WHERE recordID=?");
-
-		var_dump($stmt);
 
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
@@ -92,7 +92,7 @@ class RecordDAL {
 
 		$latestRecords = array();
 
-		$stmt = $this->database->prepare("SELECT * FROM record ORDER BY recordID DESC LIMIT 4");
+		$stmt = $this->database->prepare("SELECT * FROM " . self::$recordTable . " ORDER BY recordID DESC LIMIT 4");
 		
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
@@ -129,6 +129,11 @@ class RecordDAL {
 			throw new \Exception($this->database->error);
 		}
 
+		
+		if ($recordID === null) {
+			throw new RecordDontExistException();
+		}
+
 		$stmt->bind_param("i", $recordID);
 
 		$stmt->execute();
@@ -137,11 +142,8 @@ class RecordDAL {
 
 		$stmt->fetch();
 
-		if ($recordID === null) {
-			throw new RecordDontExistException();
-		}
-
 		$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+		
 		$record->setRecordID($recordID);
 
 		return $record;
@@ -149,10 +151,100 @@ class RecordDAL {
 
 	public function removeRecord($recordID) {
 		$stmt = $this->database->prepare("DELETE FROM `" . self::$recordTable . "` WHERE recordID = ?");
+
+		if ($stmt === false) {
+			throw new \Exception($this->database->error);
+		}
+
 		$stmt->bind_param("i", $recordID);
-		$stmt->execute();		
+		
+		$stmt->execute();	
+
+		// Removes record rating as well.
+		$this->removeRating($recordID);	
 	}
 
+	public function addRatingToRecord(\model\Record $record, $rating) {
+		$stmt = $this->database->prepare("INSERT INTO " . self::$ratingTable . "(recordID, rating) VALUES (?, ?)");
 
+		// $stmt = $this->database->prepare("INSERT INTO `" . \DbSettings::DATABASE .  "`.`" . self::$recordTable . "`(
+		// 	`title`, `artist`, `releaseYear`, `description`, `price`, `cover`) 
+		// 		VALUES (?, ?, ?, ?, ?, ?)");
 
+		if ($stmt === false) {
+			throw new \Exception($this->database->error);
+		}
+
+		$stmt->bind_param("ii", $recordID, $rating);
+
+		$recordID = $record->getRecordID();
+		$rating = $rating;
+
+		$stmt->execute();
+	}
+
+	/**
+	 * If record already has been rated this method updates rating.
+	 */
+	public function updateRecordRating(\model\Record $record, $newRating) {
+		
+		$stmt = $this->database->prepare("UPDATE " . self::$ratingTable . " SET rating=? WHERE recordID=?");
+
+		if ($stmt === false) {
+			throw new \Exception($this->database->error);
+		}
+
+		$stmt->bind_param("ii", $rating, $recordID);
+
+		$rating = $newRating;
+		$recordID = $record->getRecordID();
+
+		$stmt->execute();
+
+	}
+
+	/**
+	 * Fetches score of given record.
+	 * @param  \model\Record $record [description]
+	 * @return [type]                [description]
+	 */
+	public function getRating(\model\Record $record) {
+		
+		if ($record === null) {
+			throw new Exception("Record has no rating.");
+		}
+
+		$recordID = $record->getRecordID();
+
+		$stmt = $this->database->prepare("SELECT rating FROM " . self::$ratingTable . " WHERE recordID=?");
+
+		if ($stmt === false) {
+			throw new \Exception($this->database->error);
+		}
+
+		$stmt->bind_param("i", $recordID);
+
+		$stmt->execute();
+
+		$stmt->bind_result($rating);
+
+		$stmt->fetch();
+
+		return $rating;
+	}
+
+	public function removeRating($recordID) {
+		
+		$stmt = $this->database->prepare("DELETE FROM " . self::$ratingTable . " WHERE recordID = ?");
+	
+
+		if ($stmt === false) {
+			throw new \Exception($this->database->error);
+		}
+
+		$stmt->bind_param("i", $recordID);
+		
+		$stmt->execute();	
+
+	}
 }

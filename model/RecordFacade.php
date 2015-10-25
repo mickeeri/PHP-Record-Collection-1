@@ -14,13 +14,12 @@ class RecordFacade {
 	}
 
 	public function saveRecord(\model\Record $recordToBeAdded) {
-		//var_dump($recordToBeAdded);
 
 		// If id is null record does not exists in db. 
 		if ($recordToBeAdded->getRecordID() === null) {
 			$this->dal->add($recordToBeAdded);
 		} 
-		// Otherwise youst wants to be updated.
+		// Otherwise needs to be updated.
 		else {
 			$this->dal->updateRecord($recordToBeAdded);
 		}		
@@ -37,8 +36,9 @@ class RecordFacade {
 	public function removeRecord(\model\Record $record) {
 		// Removes cover image from directory.
 		$filename = \Settings::PIC_UPLOAD_DIR . $record->getCoverFilePath();
+		// TODO: Kolla om filen finns.
 		unlink($filename);
-
+	
 		// Removes entry in the database.
 		$this->dal->removeRecord($record->getRecordID());
 	}
@@ -49,5 +49,23 @@ class RecordFacade {
 
 	public function getLatestRecords() {
 		return $this->dal->getLatestRecords();
+	}
+
+	/**
+	 * Gets values from RecordController.
+	 * @param \model\Record $record record to rate
+	 * @param int     $rating rating score from 1-5
+	 */
+	public function addRatingToRecord(\model\Record $record, $rating) {
+		// If record already has rating.
+		if ($this->getRecordRating($record) !== null) {
+			$this->dal->updateRecordRating($record, $rating);
+		} else {
+			$this->dal->addRatingToRecord($record, $rating);
+		}		
+	}
+
+	public function getRecordRating(\model\Record $record) {
+		return $this->dal->getRating($record);
 	}
 }

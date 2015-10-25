@@ -20,6 +20,4 @@ class HomeController {
 	public function doHome() {
 		$this->view->setLatestRecords($this->recordFacade->getLatestRecords());
 	}
-
-
 }
