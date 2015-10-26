@@ -42,18 +42,23 @@ class ShowRecordView {
 			$this->displayCurrentRating();
 		}
 		
+		// Check if user has pressed delete album link.
 		if ($this->userWantsToDeleteRecord) {
 			$response = $this->deleteRecordConfirmation();
 		} else {
+			// Just show record. 
 			$response = $this->renderRecordInfo();
 		}
 	
 		return $response;
 	}
 
+	/**
+	 * Renders information and image of current album. 
+	 * @return string HTML
+	 */
 	private function renderRecordInfo() {
 		$imagePath = \Settings::PIC_UPLOAD_DIR . $this->record->getCoverFilePath();
-
 
 		$ret = '
 			<div class="media">
@@ -64,12 +69,11 @@ class ShowRecordView {
 			  </div>
 			  <div class="media-body">
 			    <h3 class="media-heading">' . $this->record->getTitle() . ' by ' . $this->record->getArtist() . '</h3>
-			    <p>Release year: ' . $this->record->getReleaseYear() . '</p>
-			    <p>About: ' . $this->record->getDescription() . '</p>
-			    <p>Price: ' . $this->record->getPrice() . ' $</p>
+			    <p><strong>Release year:</strong> ' . $this->record->getReleaseYear() . '</p>
+			    <p><strong>About:</strong> ' . $this->record->getDescription() . '</p>
 			    <p><a href="?' . self::$deleteLinkID . '=' . $this->record->getRecordID() . '">Radera skiva</a></p>
 			    <p><a href="?' . self::$updateLinkID . '=' . $this->record->getRecordID() . '">Redigera skiva</a></p>
-				<h3>Betyg</h3>
+				<h3>Rating</h3>
 				<div class="rating">
 					<form method="post">
 						<input class="btn btn-' . $this->submitRating1CssClass .'" name="' . self::$submitRating1ID . '" type="submit" value="1">
@@ -85,7 +89,6 @@ class ShowRecordView {
 
 		return $ret;
 	}
-
 	
 	/**
 	 * If record is rated, this method changes the css class of the button displaying 
@@ -134,7 +137,9 @@ class ShowRecordView {
 	// }
 
 
-
+	/**
+	 * If user has pressed delete record link this confirmation form is rendered.
+	 */
 	private function deleteRecordConfirmation() {
 		$ret = '
 			<div class="alert alert-warning" role="alert">
@@ -150,30 +155,46 @@ class ShowRecordView {
 		return $ret;
 	}
 
+	/**
+	 * Controller sets the choosen record.
+	 * @param \model\Record $record
+	 */
 	public function setRecord($record) {
 		$this->record = $record;
 	}
 
+	/**
+	 * Sets the records current rating.
+	 * @param int $rating
+	 */
 	public function setRecordRating($rating) {
 		$this->recordRating = $rating;
 	}
 
+	/**
+	 * Sets the private boolean member userWantsToDeleteRecord.
+	 */
 	public function setUserWantsToDeleteRecord() {
 		$this->userWantsToDeleteRecord = true;
 	}
 
+	/**
+	 * @return boolean true if user has confirmed deletion of record.
+	 */
 	public function userHasConfirmedDelete() {
 		return isset($_POST[self::$confirmDeleteRecordID]);
 	}
 
-	// If user has answered no on question "Do you want to delete album..."
+	/**
+	 * @return boolean true if user has answered no on question "Do you want to delete album..."
+	 */
 	public function userHasDeclinedDelete() {		
 		return isset($_POST[self::$declineDeleteRecordID]);
 	}	
 
 	/**
 	 * Returns value of rating if one of the ratings is set.
-	 * @return int score, null if no rating is given.
+	 * @return int score, null if no rating is posted.
 	 */
 	public function getSubmittedRecordRating() {
 

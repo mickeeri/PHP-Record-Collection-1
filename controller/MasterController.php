@@ -9,21 +9,16 @@ require_once("view/NewRecordView.php");
 require_once("view/IndexRecordView.php");
 require_once("view/ShowRecordView.php");
 
-//require_once("view/order/NewOrderView.php");
 
 
 require_once("controller/HomeController.php");
 require_once("controller/RecordController.php");
-// require_once("controller/OrderController.php");
+
 
 require_once("model/RecordModel.php");
 require_once("model/RecordFacade.php");
 
 require_once("model/RecordDAL.php");
-
-// require_once("model/customer/CustomerModel.php");
-// require_once("model/order/OrderDAL.php");
-// require_once("model/order/OrderFacade.php");
 
 require_once("DBSettings.php");
 
@@ -53,70 +48,70 @@ class MasterController {
 	 * Selects views and controllers based on input.
 	 */
 	public function handleInput() {
-		// CREATE
-		if ($this->navigationView->onNewRecordPage()) {
-			$this->view = new \view\NewRecordView();
-			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-			$controller->addRecord();			
-		} 
-
-		// UPDATE
-		elseif ($this->navigationView->onUpdateRecordPage()) {
-			$this->view = new \view\NewRecordView();
-			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);			
-			$recordID = $this->navigationView->getRecordToShow();
-			//$controller->getRecord($recordID);						
-			$controller->updateRecord($recordID);	
-		}
 		
-		// READ ALL
-		elseif ($this->navigationView->onRecordListPage()) {
-			$this->view = new \view\IndexRecordView();
-			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-			$controller->getRecords();
-		} 
+		if ($this->navigationView->onLoginPage()) {
+			# code...
+		} elseif ($this->view->onRegistrationPage()) {
+			# code...
+		} else {
+			// CREATE
+			if ($this->navigationView->onNewRecordPage()) {
+				$this->view = new \view\NewRecordView();
+				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+				$controller->addRecord();			
+			} 
 
-		// READ ONE
-		elseif ($this->navigationView->onRecordShowPage()) {
+			// UPDATE
+			elseif ($this->navigationView->onUpdateRecordPage()) {
+				$this->view = new \view\NewRecordView();
+				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);			
+				$recordID = $this->navigationView->getRecordToShow();
+				//$controller->getRecord($recordID);						
+				$controller->updateRecord($recordID);	
+			}
 			
-			$this->view = new \view\ShowRecordView();
-			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-			$recordID = $this->navigationView->getRecordToShow();
-			$controller->getRecord($recordID);			
+			// READ ALL
+			elseif ($this->navigationView->onRecordListPage()) {
+				$this->view = new \view\IndexRecordView();
+				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+				$controller->getRecords();
+			} 
+
+			// READ ONE
+			elseif ($this->navigationView->onRecordShowPage()) {
+				
+				$this->view = new \view\ShowRecordView();
+				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+				$recordID = $this->navigationView->getRecordToShow();
+				$controller->getRecord($recordID);			
+			}
+
+			// DELETE
+			elseif ($this->navigationView->onDeleteRecordPage()) {
+				$this->view = new \view\ShowRecordView();
+				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+				$recordID = $this->navigationView->getRecordToShow();
+				$controller->deleteRecord($recordID);
+			}
+
+			elseif ($this->navigationView->wantsToRateRecord()) {
+				$this->view = new \view\ShowRecordView();
+				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+				$rating = $this->navigationView->getRecordRating();
+				$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
+				$controller->rateRecord($rating, $recordID);			
+			}
+			
+			// HOME PAGE
+			else {
+				$this->view = new \view\HomeView();
+				$controller = new \controller\HomeController($this->view, $this->navigationView, $this->recordFacade);		
+				$controller->doHome();
+			}
 		}
 
-		// DELETE
-		elseif ($this->navigationView->onDeleteRecordPage()) {
-			$this->view = new \view\ShowRecordView();
-			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-			$recordID = $this->navigationView->getRecordToShow();
-			$controller->deleteRecord($recordID);
-		}
 
-		elseif ($this->navigationView->wantsToRateRecord()) {
-			$this->view = new \view\ShowRecordView();
-			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-			$rating = $this->navigationView->getRecordRating();
-			$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
-			$controller->rateRecord($rating, $recordID);			
-		}
 
-		// // NEW ORDER
-		// elseif ($this->navigationView->onOrderPage()) {
-		// 	$this->view = new \view\NewOrderView();
-		// 	$controller = new \controller\OrderController($this->view, $this->navigationView, $this->orderFacade);
-		// 	$recordID = $this->navigationView->getRecordToShow();	
-		// 	$record =  $this->recordFacade->getRecord($recordID);
-
-		// 	$controller->addRecordToOrder($record);		
-		// }
-		
-		// HOME PAGE
-		else {
-			$this->view = new \view\HomeView();
-			$controller = new \controller\HomeController($this->view, $this->navigationView, $this->recordFacade);		
-			$controller->doHome();
-		}
 
 		$this->mysqli->close();		
 	}

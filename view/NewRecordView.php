@@ -42,14 +42,15 @@ class NewRecordView {
 	}
 
 	/**
-	 * Renders form for new record.
+	 * Renders form for adding new record.
+	 * @return string HTML
 	 */
 	private function getNewRecordForm() {
 
 		if ($this->isUpdate()) {
-			$header = "Uppdatera album";
+			$header = "Edit album";
 		} else {
-			$header = "Lägg till ny skiva";
+			$header = "Add new record";
 		}
 
 		return '
@@ -80,7 +81,7 @@ class NewRecordView {
 				// 	<input type="file" class="form-control" name ="' . self::$coverInputId . '" 
 				// 	id="' . self::$coverInputId . '" value="Upload">
 				// </div>
-				.'<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Spara">
+				.'<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Save">
 			</form>
 		';
 	}
@@ -145,7 +146,7 @@ class NewRecordView {
 	}
 
 	/**
-	 * Returns div with error message if there is one.
+	 * @return string HTML and error message if there is one.
 	 */
 	private function showErrorMessage() {
 		
@@ -162,6 +163,9 @@ class NewRecordView {
 		';
 	}
 
+	/**
+	 * @return string HTML and success message if there is one.
+	 */
 	private function showSuccessMessage() {
 		
 		if ($this->successMessage === "") {
@@ -184,9 +188,12 @@ class NewRecordView {
 		return isset($_POST[self::$submitPostId]);
 	}
 
+	/**
+	 * Get the input via $_POST method and creates new Record object.
+	 * @return \model\Record $record, null if new object doesn't pass validation.
+	 */
 	public function getNewRecord() {
 		
-
 		$title = $_POST[self::$titleInputId];
 		$artist = $_POST[self::$artistInputId];
 		$releaseYear = $_POST[self::$releaseYearInputId];
@@ -204,6 +211,7 @@ class NewRecordView {
 				
 		try {							
 			
+			// Creates new record object and returns it. 
 			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
 			$record->setRecordID($recordID);
 
@@ -234,10 +242,18 @@ class NewRecordView {
 		$this->record = $record;
 	}
 
+	/**
+	 * Sets error message
+	 * @param string $message
+	 */
 	public function setErrorMessage($message) {
 		$this->errorMessage = $message;
 	}
 
+	/**
+	 * Same form is used for update, this method checks if record already exists. 
+	 * @return boolean true if record exists
+	 */
 	private function isUpdate() {
 		if ($this->record === null) {
 			return false;
