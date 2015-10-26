@@ -4,6 +4,7 @@ require_once("Settings.php");
 require_once("view/LayoutView.php");
 require_once("view/NavigationView.php");
 require_once("controller/MasterController.php");
+require_once("view/MessageView.php");
 
 if (Settings::DISPLAY_ERRORS) {
 	error_reporting(-1);

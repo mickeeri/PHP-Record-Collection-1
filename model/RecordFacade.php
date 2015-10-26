@@ -9,6 +9,8 @@ class RecordFacade {
 	
 	private $dal;
 
+	private static $defaultCoverFileName = "default.png";
+
 	function __construct(\model\RecordDAL $recordDAL) {
 		$this->dal = $recordDAL;
 	}
@@ -20,25 +22,33 @@ class RecordFacade {
 			$this->dal->add($recordToBeAdded);
 		} 
 		// Otherwise needs to be updated.
-		else {
+		else {		
+			
+			// Comparing the new filename with the one already in datbase.
+			$oldCoverFileName = $this->getRecord($recordToBeAdded->getRecordID())->getCoverFilePath();
+
+			// If they don't match the old file is removed.
+			if ($oldCoverFileName !== $recordToBeAdded->getCoverFilePath() && $oldCoverFileName !== self::$defaultCoverFileName) {
+				unlink(\Settings::PIC_UPLOAD_DIR . $oldCoverFileName);
+			}
+
 			$this->dal->updateRecord($recordToBeAdded);
 		}		
 	}
+
 
 	public function getRecords() {
 		return $this->dal->getRecords();
 	}
 
-	// public function updateRecord($record) {
-	// 	$this->dal->updateRecord($record);
-	// }
-
 	public function removeRecord(\model\Record $record) {
-		// Removes cover image from directory.
-		$filename = \Settings::PIC_UPLOAD_DIR . $record->getCoverFilePath();
-		// TODO: Kolla om filen finns.
-		unlink($filename);
-	
+		
+		if ($record->getCoverFilePath() !== self::$defaultCoverFileName) {
+			// Removes cover image from directory.
+			$filename = \Settings::PIC_UPLOAD_DIR . $record->getCoverFilePath();
+			unlink($filename);
+		}
+
 		// Removes entry in the database.
 		$this->dal->removeRecord($record->getRecordID());
 	}
@@ -50,6 +60,7 @@ class RecordFacade {
 	public function getLatestRecords() {
 		return $this->dal->getLatestRecords();
 	}
+
 
 	/**
 	 * Gets values from RecordController.

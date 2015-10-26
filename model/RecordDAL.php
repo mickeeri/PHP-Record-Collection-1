@@ -18,8 +18,8 @@ class RecordDAL {
 
 		// TODO: Förenkla prepeare statement.
 		$stmt = $this->database->prepare("INSERT INTO `" . \DbSettings::DATABASE .  "`.`" . self::$recordTable . "`(
-			`title`, `artist`, `releaseYear`, `description`, `price`, `cover`) 
-				VALUES (?, ?, ?, ?, ?, ?)");
+			`title`, `artist`, `releaseYear`, `description`, `cover`) 
+				VALUES (?, ?, ?, ?, ?)");
 
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
@@ -29,10 +29,9 @@ class RecordDAL {
 		$artist = $recordToBeAdded->getArtist();
 		$releaseYear = $recordToBeAdded->getReleaseYear();
 		$description = $recordToBeAdded->getDescription();
-		$price = $recordToBeAdded->getPrice();
 		$cover = $recordToBeAdded->getCoverFilePath();
 
-		$stmt->bind_param('ssssds', $title, $artist, $releaseYear, $description, $price, $cover);
+		$stmt->bind_param('sssss', $title, $artist, $releaseYear, $description, $cover);
 		
 		$stmt->execute();
 	}
@@ -41,20 +40,19 @@ class RecordDAL {
 		/// UPDATE `phpassignment`.`record` SET `artist` = 'Bruce Springsteen' WHERE `record`.`recordID` = 19;
 
 		$stmt = $this->database->prepare("UPDATE " . self::$recordTable . " SET title=?, artist=?, releaseYear=?, 
-			description=?, price=?, cover=? WHERE recordID=?");
+			description=?, cover=? WHERE recordID=?");
 
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
 		}
 
-		$stmt->bind_param('ssssdsi', $title, $artist, $releaseYear, $description, $price, $cover, $recordID);
+		$stmt->bind_param('sssssi', $title, $artist, $releaseYear, $description, $cover, $recordID);
 
 		$recordID = $recordToBeUpdated->getRecordID();
 		$title = $recordToBeUpdated->getTitle();
 		$artist = $recordToBeUpdated->getArtist();
 		$releaseYear = $recordToBeUpdated->getReleaseYear();
 		$description = $recordToBeUpdated->getDescription();
-		$price = $recordToBeUpdated->getPrice();
 		$cover = $recordToBeUpdated->getCoverFilePath();
 
 		$stmt->execute();
@@ -76,10 +74,10 @@ class RecordDAL {
 
 		$stmt->execute();
 
-		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price, $cover);
+		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $cover);
 
 		while ($stmt->fetch()) {
-			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+			$record = new \model\Record($title, $artist, $releaseYear, $description, $cover);
 			$record->setRecordID($recordID);
 			$records[] = $record;
 		}
@@ -107,10 +105,10 @@ class RecordDAL {
 
 		$stmt->execute();
 
-		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price, $cover);
+		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $cover);
 
 		while ($stmt->fetch()) {
-			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+			$record = new \model\Record($title, $artist, $releaseYear, $description, $cover);
 			$record->setRecordID($recordID);		
 			$latestRecords[] = $record;
 		}
@@ -146,11 +144,11 @@ class RecordDAL {
 
 		$stmt->execute();
 
-		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $price, $cover);
+		$stmt->bind_result($recordID, $title, $artist, $releaseYear, $description, $cover);
 
 		$stmt->fetch();
 
-		$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+		$record = new \model\Record($title, $artist, $releaseYear, $description, $cover);
 		
 		$record->setRecordID($recordID);
 
@@ -178,10 +176,6 @@ class RecordDAL {
 
 	public function addRatingToRecord(\model\Record $record, $rating) {
 		$stmt = $this->database->prepare("INSERT INTO " . self::$ratingTable . "(recordID, rating) VALUES (?, ?)");
-
-		// $stmt = $this->database->prepare("INSERT INTO `" . \DbSettings::DATABASE .  "`.`" . self::$recordTable . "`(
-		// 	`title`, `artist`, `releaseYear`, `description`, `price`, `cover`) 
-		// 		VALUES (?, ?, ?, ?, ?, ?)");
 
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);

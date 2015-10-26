@@ -4,11 +4,11 @@ namespace view;
 
 class NavigationView {
 
-	private static $newRecordURL = "nyskiva";
-	public static $recordListURL = "skivlista";
+	private static $newRecordURL = "newrecord";
+	public static $recordListURL = "records";
 	public static $recordShowURL = "record";
 	private static $deleteLinkURL = "deleterecord";
-	private static $updateLinkURL = "uppdateraskiva";
+	public static $updateLinkURL = "editrecord";
 
 
 	// Public static links
@@ -28,9 +28,9 @@ class NavigationView {
 
 		return '
 		<ul class="nav nav-tabs">
-			<li class="' . self::$homeLinkClass . '"><a href="?">Hem</a></li>
-			<li class="' . self::$newRecordLinkClass . '"><a href="?' . self::$newRecordURL . '">Ny skiva</a></li>
-			<li class="' . self::$recordListLinkClass . '"><a href="?' . self::$recordListURL . '">Se skivor</a></li>
+			<li class="' . self::$homeLinkClass . '"><a href="?">Home</a></li>
+			<li class="' . self::$newRecordLinkClass . '"><a href="?' . self::$newRecordURL . '">Add new record</a></li>
+			<li class="' . self::$recordListLinkClass . '"><a href="?' . self::$recordListURL . '">List of records</a></li>
 		</ul>
 		';
 	}
@@ -101,9 +101,9 @@ class NavigationView {
 	}
 
 	private function setAsActive() {
-		if($this->onNewRecordPage()) {
+		if($this->onNewRecordPage() || $this->onUpdateRecordPage()) {
 			self::$newRecordLinkClass = "active";
-		} elseif ($this->onRecordListPage() || $this->onRecordShowPage() || $this->onDeleteRecordPage() || $this->onUpdateRecordPage()) {
+		} elseif ($this->onRecordListPage() || $this->onRecordShowPage() || $this->onDeleteRecordPage()) {
 			self::$recordListLinkClass = "active";
 		} else {
 			self::$homeLinkClass = "active";

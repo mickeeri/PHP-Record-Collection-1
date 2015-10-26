@@ -38,7 +38,6 @@ class HomeView {
 							<h3>' . $record->getTitle() . '</h3>
 							<h4>' . $record->getArtist() . '</h4>
 							<p>' . $record->getDescription() . '</p>
-							<p><strong>' . $record->getPrice() . ' $</strong></p>
 							
 
 							<a href="?'. \view\NavigationView::$recordShowURL . '=' . $record->getRecordID() . '"" 

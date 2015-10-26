@@ -46,7 +46,7 @@ class RecordController {
 		if($this->view->userHasConfirmedDelete()) {
 			$recordTitle = $record->getTitle();
 			$this->facade->removeRecord($record);
-			$this->navigationView->redirect(\view\NavigationView::$recordListURL, $recordTitle . " har raderats.");
+			$this->navigationView->redirect(\view\NavigationView::$recordListURL, $recordTitle . \view\Message::$hasBeenDeleted);
 		} elseif ($this->view->userHasDeclinedDelete()) {
 			$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID());
 		}
@@ -65,9 +65,9 @@ class RecordController {
 				try {
 					$this->facade->saveRecord($record);
 					$this->navigationView->redirect(\view\NavigationView::$recordShowURL.'='.$record->getRecordID(), 
-						"Albumet har uppdaterats.");
+						\view\Message::$hasBeenUpdated);
 				} catch (\Exception $e) {
-					$this->view->setErrorMessage("Något gick fel.");
+					$this->view->setErrorMessage(\view\Message::$generalError);
 				}
 			}
 		}
@@ -84,7 +84,7 @@ class RecordController {
 					$this->facade->saveRecord($record);
 					$this->view->isRecordSaved = true;
 				} catch (\Exception $e) {
-					$this->view->setErrorMessage("Något gick fel.");
+					$this->view->setErrorMessage(\view\Message::$generalError);
 				}
 			}
 		}

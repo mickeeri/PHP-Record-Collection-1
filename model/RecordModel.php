@@ -8,6 +8,11 @@ class WrongReleaseYearException extends \Exception {};
 class NoDescriptionException extends \Exception {};
 class WrongPriceException extends \Exception {};
 class WrongRatingException extends \Exception {};
+class InvalidFileTypeException extends \Exception {};
+class ImageUploadException extends \Exception {};
+class MissingRelaseYearException extends \Exception {};
+class StringTooLongException extends \Exception {};
+class InvalidFileSizeException extends \Exception {};
 
 class Record {
 	
@@ -16,32 +21,37 @@ class Record {
 	private $artist;
 	private $releaseYear;
 	private $description;
-	private $price;
 	private $cover;
 	private $rating;
 
-	function __construct($title, $artist, $releaseYear, $description, $price, $cover) {
+	private static $defaultCoverFileName = "default.png";
 
-		// if (is_string($title) === false || $title === "") {
-		// 	throw new NoTitleException();
-		// }
+	function __construct($title, $artist, $releaseYear, $description, $cover) {
 
-		// if (is_string($artist) === false || $artist === "") {
-		// 	throw new NoArtistException();
-		// }
+		if (is_string($title) === false || $title === "") {
+			throw new NoTitleException();
+		}
 
-		// if (is_numeric($releaseYear) === false || $releaseYear < 1900 || $releaseYear > 2000) {
-		// 	throw new WrongReleaseYearException();
-		// }
+		if (is_string($artist) === false || $artist === "") {
+			throw new NoArtistException();
+		}
 
-		// if (is_string($description) === false || $description === "") {
-		// 	throw new NoDescriptionException();
-		// }
+		if ($releaseYear === "") {
+			throw new MissingRelaseYearException();
+		}
 
-		// if (is_numeric($price) === false || $price < 0 || $price > 10000) {
-		// 	throw new WrongPriceException();
-		// }
-		// 
+		if (is_numeric($releaseYear) === false || $releaseYear < 1900 || $releaseYear > 2000) {
+			throw new WrongReleaseYearException();
+		}
+
+		if (mb_strlen($description) > 140) {
+			throw new StringTooLongException();
+		}
+
+		if (is_string($description) === false || $description === "") {
+			throw new NoDescriptionException();
+		}
+		
 		
 		/**
 		 * Check if $cover is simple string (file path) and therefore already in database. 
@@ -57,7 +67,6 @@ class Record {
 		$this->artist = $artist;
 		$this->releaseYear = $releaseYear;
 		$this->description = $description;
-		$this->price = $price;
 	}
 
 	public function setRecordID($recordID) {
@@ -89,10 +98,6 @@ class Record {
 		return $this->description;
 	}
 
-	public function getPrice() {
-		return $this->price;
-	}
-
 	public function getCoverFilePath() {
 		return $this->cover;
 	}
@@ -102,44 +107,62 @@ class Record {
 	}
 
 	/**
-	 * [validateAndSaveCoverFile description]
+	 * Validates and save image.
+	 * Some code from: http://www.sitepoint.com/file-uploads-with-php/
 	 * @param  array $image information of image uploaded via HTTP POST $_FILES.
 	 * @return string       sanatized file name
 	 */
 	private function validateAndSaveCoverFile($image) {
 
-		// http://www.sitepoint.com/file-uploads-with-php/
-	
-		if ($image["error"] !== UPLOAD_ERR_OK) {
-			throw new \Exception();
-		}
+		// Use default image if no image is uploaded. 
+		if ($image["name"] === "") {
+			$name = self::$defaultCoverFileName;
+		} else {
 
-		// Checking the file type.
-		$fileType = exif_imagetype($image["tmp_name"]);
-		$allowed = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
-		if (!in_array($fileType, $allowed)) {
-		    throw new InvalidFileTypeException();
-		}
 
-		// Ensures that file name is safe.
-		$name = preg_replace("/[^A-Z0-9._-]/i", "_", $image["name"]);
 		
-		// Don't overwrite an existing file
-		$i = 0;
-		$parts = pathinfo($name);
-		while (file_exists(\Settings::PIC_UPLOAD_DIR . $name)) {
-		    $i++;
-		    $name = $parts["filename"] . "-" . $i . "." . $parts["extension"];
+			if ($image["error"] !== UPLOAD_ERR_OK) {
+				throw new \ImageUploadException();
+			}		
+
+			// Checking the file type.
+			$fileType = exif_imagetype($image["tmp_name"]);
+			$allowed = array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG);
+			if (!in_array($fileType, $allowed)) {
+			    throw new InvalidFileTypeException();
+			}
+
+			var_dump($image["size"]);
+
+			if ($image["size"] > 1048576) {
+				throw new InvalidFileSizeException();
+			}
+
+			// if (condition) {
+			// 	# code...
+			// }
+
+			// Ensures that file name is safe.
+			$name = preg_replace("/[^A-Z0-9._-]/i", "_", $image["name"]);
+			
+			// Don't overwrite an existing file
+			$i = 0;
+			$parts = pathinfo($name);
+			while (file_exists(\Settings::PIC_UPLOAD_DIR . $name)) {
+			    $i++;
+			    $name = $parts["filename"] . "-" . $i . "." . $parts["extension"];
+			}
+			
+			// Preserve file from temporary directory
+			$success = move_uploaded_file($image["tmp_name"], \Settings::PIC_UPLOAD_DIR . $name);
+			if (!$success) {
+				throw new \ImageUploadException();
+			}
+			
+			// Set proper permissions on the new file
+			chmod(\Settings::PIC_UPLOAD_DIR . $name, 0644);
+
 		}
-		
-		// Preserve file from temporary directory
-		$success = move_uploaded_file($image["tmp_name"], \Settings::PIC_UPLOAD_DIR . $name);
-		if (!$success) {
-			throw new \Exception("Unable to save file");
-		}
-		
-		// Set proper permissions on the new file
-		chmod(\Settings::PIC_UPLOAD_DIR . $name, 0644);
 
 		return $name;
 	}

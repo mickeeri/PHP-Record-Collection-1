@@ -23,17 +23,17 @@ class NewRecordView {
 
 	private $record;
 
-	function __construct() {
+	// function __construct() {
 
-	}
+	// }
 
 	/**
-	 * @return [type]
+	 * Returns HTML response
 	 */
 	public function response() {
 
 		if ($this->isRecordSaved) {
-			$this->successMessage = "Du har lagt till en ny skiva.";
+			$this->successMessage = \view\Message::$hasBeenAdded;
 		}
 
 		$response = $this->getNewRecordForm();
@@ -54,35 +54,19 @@ class NewRecordView {
 		}
 
 		return '
-			<h2>'. $header . '</h2>
-			' . $this->showErrorMessage() . '
-			' . $this->showSuccessMessage() . '
-			<form method="post" enctype="multipart/form-data">'.
-				
-				$this->getInputField("Titel", self::$titleInputId, "text") .
-				$this->getInputField("Artist", self::$artistInputId, "text") .
-				$this->getInputField("Utgivningsår", self::$releaseYearInputId, "text") .
-				$this->getInputField("Om", self::$descriptionInputId, "textarea") .
-				$this->getInputField("Pris", self::$priceInputId, "text") .
-				$this->getInputField("Ladda upp omslag", self::$coverInputId, "file") 
-
-
-
-
-				// <div class="form-group">
-				// 	<label for="' . self::$descriptionInputId . '">Beskrivning</label>
-				// 	<textarea rows="3" class="form-control" name ="' . self::$descriptionInputId . '" 
-				// 	id="' . self::$descriptionInputId . '" placeholder="Beskrivning"></textarea>
-				// </div>
-
-
-				// <div class="form-group">
-				// 	<label for="' . self::$coverInputId . '">Upload cover</label>
-				// 	<input type="file" class="form-control" name ="' . self::$coverInputId . '" 
-				// 	id="' . self::$coverInputId . '" value="Upload">
-				// </div>
-				.'<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Save">
-			</form>
+			<div class="col-md-6">
+				<h2>'. $header . '</h2>
+				' . $this->showErrorMessage() . '
+				' . $this->showSuccessMessage() . '
+				<form method="post" enctype="multipart/form-data">'.			
+					$this->getInputField("Title", self::$titleInputId, "text") .
+					$this->getInputField("Artist", self::$artistInputId, "text") .
+					$this->getInputField("Release year", self::$releaseYearInputId, "text") .
+					$this->getInputField("About", self::$descriptionInputId, "textarea") .
+					$this->getInputField("Upload cover", self::$coverInputId, "file") 
+					.'<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Save">
+				</form>
+			</div>
 		';
 	}
 
@@ -93,18 +77,19 @@ class NewRecordView {
 	 */
 	private function getInputField($title, $name, $type){
 
-		// Get the value from current object if update otherwise textfields should be empty.
-		if ($this->isUpdate()) {
-			$value = $this->getPostField($name);
-		} else {
-			$value = "";
-		}
-		
-		
+		// // Get the value from current object if update otherwise textfields should be empty.
+		// if ($this->isUpdate()) {
+		// 	$value = $this->getPostField($name);
+		// } else {
+		// 	$value = "";
+		// }
+
+		$value = $this->getPostField($name);
+			
 		return "
 			<div class='form-group'>
 				<label for='$name'>$title</label>
-				<input class='form-control' id='$name' type='$type' value='$value' name='$name' placeholder='$title'>
+				<input class='form-control' id='$name' type='$type' value='$value' name='$name' >
 			</div>
 			";
 	}
@@ -116,8 +101,7 @@ class NewRecordView {
 	 * @return string        field value
 	 */
 	private function getPostField($field){
-		if ($this->isUpdate()) {
-			
+		if ($this->isUpdate()) {			
 			if ($field === self::$titleInputId) {
 				return trim($this->record->getTitle());
 			} if ($field === self::$artistInputId) {
@@ -125,24 +109,16 @@ class NewRecordView {
 			} if ($field === self::$releaseYearInputId) {
 				return trim($this->record->getReleaseYear());
 			} if ($field === self::$descriptionInputId) {
-				return trim($this->record->getDescription());
-			} if ($field === self::$priceInputId) {
-				return trim($this->record->getPrice());
-			}
-
-			// if ($field === self::$coverInputId) {
-			// 	return trim($this->record->getCoverFilePath());
-			// }
+				return $this->record->getDescription();
+			} 
 		}
 
+		elseif (isset($_POST[$field]) && $this->isRecordSaved === false) {			
+			// Trims and removes special chars. 
+			return filter_var(trim($_POST[$field]), FILTER_SANITIZE_STRING);
+		}
 
-
-
-		// if (isset($_POST[$field])) {			
-		// 	// Trims and removes special chars. 
-		// 	return filter_var(trim($_POST[$field]), FILTER_SANITIZE_STRING);
-		// }
-		// return  "";
+		return  "";
 	}
 
 	/**
@@ -198,13 +174,25 @@ class NewRecordView {
 		$artist = $_POST[self::$artistInputId];
 		$releaseYear = $_POST[self::$releaseYearInputId];
 		$description = $_POST[self::$descriptionInputId];
-		$price = $_POST[self::$priceInputId];
+		//$price = $_POST[self::$priceInputId];
 		
 		if ($this->isUpdate()) {
-			// TODO: Gör så att man kan byta bild.
-			$cover = $this->record->getCoverFilePath();
+			
+			// Get the old record id.
 			$recordID = $this->record->getRecordID();
-		} else {
+
+			// If file name is empty string use the same album cover. 
+			if ($_FILES[self::$coverInputId]["name"] === "") {
+				$cover = $this->record->getCoverFilePath();
+			} 
+			// Otherwise the user wants to upload another cover. 
+			else {				
+				$cover = $_FILES[self::$coverInputId];
+			}
+
+		} 
+		// If not update upload new cover. Record still doesn't have id.
+		else {
 			$cover = $_FILES[self::$coverInputId];
 			$recordID = null;
 		}
@@ -212,23 +200,34 @@ class NewRecordView {
 		try {							
 			
 			// Creates new record object and returns it. 
-			$record = new \model\Record($title, $artist, $releaseYear, $description, $price, $cover);
+			$record = new \model\Record($title, $artist, $releaseYear, $description, $cover);
 			$record->setRecordID($recordID);
 
 			return $record;
 
 		} catch (\model\NoTitleException $e) {
-			$this->errorMessage = "Title is missing";
+			$this->errorMessage = \view\Message::$missingTitle;
 		} catch (\model\NoArtistException $e) {
-			$this->errorMessage = "Artist is missing.";
+			$this->errorMessage = \view\Message::$missingArtist;
 		} catch (\model\WrongReleaseYearException $e) {
-			$this->errorMessage = "Releaseyear has to be in the format YYYY";
+			$this->errorMessage = \view\Message::$wrongReleaseYear;
 		} catch (\model\NoDescriptionException $e) {
-			$this->errorMessage = "Description is missing.";
-		} catch (\model\WrongPriceException $e) {
-			$this->errorMessage = "The price is wrong.";
-		} catch (\Exception $e) {
-			$this->errorMessage = "Sorry! Something went wrong";
+			$this->errorMessage = \view\Message::$missingDescription;
+		} catch (\model\InvalidFileTypeException $e) {
+			$this->errorMessage = \view\Message::$invalidFileType;
+		} catch (\model\ImageUploadException $e) {
+			$this->errorMessage = \view\Message::$imageUploadError;
+		} catch (\model\MissingRelaseYearException $e) {
+			$this->errorMessage = \view\Message::$missingReleaseYear;
+		} catch (\model\StringTooLongException $e) {
+			$this->errorMessage = \view\Message::$stringIsTooLong;
+		} catch (\model\InvalidFileSizeException $e) {
+			$this->errorMessage = \view\Message::$fileSizeError;
+		}
+
+
+		catch (\Exception $e) {
+			$this->errorMessage = \view\Message::$generalError;
 		} 
 		
 		return null;

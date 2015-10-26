@@ -49,66 +49,62 @@ class MasterController {
 	 */
 	public function handleInput() {
 		
-		if ($this->navigationView->onLoginPage()) {
-			# code...
-		} elseif ($this->view->onRegistrationPage()) {
-			# code...
-		} else {
-			// CREATE
-			if ($this->navigationView->onNewRecordPage()) {
-				$this->view = new \view\NewRecordView();
-				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-				$controller->addRecord();			
-			} 
+		// CREATE
+		if ($this->navigationView->onNewRecordPage()) {
+			$this->view = new \view\NewRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+			$controller->addRecord();			
+		} 
 
-			// UPDATE
-			elseif ($this->navigationView->onUpdateRecordPage()) {
-				$this->view = new \view\NewRecordView();
-				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);			
-				$recordID = $this->navigationView->getRecordToShow();
-				//$controller->getRecord($recordID);						
-				$controller->updateRecord($recordID);	
-			}
-			
-			// READ ALL
-			elseif ($this->navigationView->onRecordListPage()) {
-				$this->view = new \view\IndexRecordView();
-				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-				$controller->getRecords();
-			} 
-
-			// READ ONE
-			elseif ($this->navigationView->onRecordShowPage()) {
-				
-				$this->view = new \view\ShowRecordView();
-				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-				$recordID = $this->navigationView->getRecordToShow();
-				$controller->getRecord($recordID);			
-			}
-
-			// DELETE
-			elseif ($this->navigationView->onDeleteRecordPage()) {
-				$this->view = new \view\ShowRecordView();
-				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-				$recordID = $this->navigationView->getRecordToShow();
-				$controller->deleteRecord($recordID);
-			}
-
-			elseif ($this->navigationView->wantsToRateRecord()) {
-				$this->view = new \view\ShowRecordView();
-				$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-				$rating = $this->navigationView->getRecordRating();
-				$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
-				$controller->rateRecord($rating, $recordID);			
-			}
-			
-			// HOME PAGE
-			else {
-				$this->view = new \view\HomeView();
-				$controller = new \controller\HomeController($this->view, $this->navigationView, $this->recordFacade);		
-				$controller->doHome();
-			}
+		// UPDATE
+		elseif ($this->navigationView->onUpdateRecordPage()) {
+			$this->view = new \view\NewRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);			
+			$recordID = $this->navigationView->getRecordToShow();
+			//$controller->getRecord($recordID);						
+			$controller->updateRecord($recordID);	
 		}
+		
+		// READ ALL
+		elseif ($this->navigationView->onRecordListPage()) {
+			$this->view = new \view\IndexRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+			$controller->getRecords();
+		} 
+
+		// READ ONE
+		elseif ($this->navigationView->onRecordShowPage()) {
+			
+			$this->view = new \view\ShowRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+			$recordID = $this->navigationView->getRecordToShow();
+			$controller->getRecord($recordID);			
+		}
+
+		// DELETE
+		elseif ($this->navigationView->onDeleteRecordPage()) {
+			$this->view = new \view\ShowRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+			$recordID = $this->navigationView->getRecordToShow();
+			$controller->deleteRecord($recordID);
+		}
+
+		// RATE
+		elseif ($this->navigationView->wantsToRateRecord()) {
+			$this->view = new \view\ShowRecordView();
+			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+			$rating = $this->navigationView->getRecordRating();
+			$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
+			$controller->rateRecord($rating, $recordID);			
+		}
+		
+		// HOME PAGE
+		else {
+			$this->view = new \view\HomeView();
+			$controller = new \controller\HomeController($this->view, $this->navigationView, $this->recordFacade);		
+			$controller->doHome();
+		}
+		
 
 
 

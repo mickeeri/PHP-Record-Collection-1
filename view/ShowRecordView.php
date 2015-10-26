@@ -12,7 +12,7 @@ class ShowRecordView {
 	private static $deleteLinkID = "deleterecord";
 	private static $confirmDeleteRecordID = "confirmdelete";
 	private static $declineDeleteRecordID = "declinedelete";
-	private static $updateLinkID = "uppdateraskiva";
+	//private static $updateLinkID = "editrecord";
 
 	// Rating submit button names.
 	private static $submitRating1ID = "rating1";
@@ -31,9 +31,9 @@ class ShowRecordView {
 
 	//public $hasJustBeenRated = false;
 
-	function __construct() {
-		# code...
-	}
+	// function __construct() {
+	// 	# code...
+	// }
 
 	public function response() {
 
@@ -71,8 +71,8 @@ class ShowRecordView {
 			    <h3 class="media-heading">' . $this->record->getTitle() . ' by ' . $this->record->getArtist() . '</h3>
 			    <p><strong>Release year:</strong> ' . $this->record->getReleaseYear() . '</p>
 			    <p><strong>About:</strong> ' . $this->record->getDescription() . '</p>
-			    <p><a href="?' . self::$deleteLinkID . '=' . $this->record->getRecordID() . '">Radera skiva</a></p>
-			    <p><a href="?' . self::$updateLinkID . '=' . $this->record->getRecordID() . '">Redigera skiva</a></p>
+			    <p><a href="?' . self::$deleteLinkID . '=' . $this->record->getRecordID() . '">Delete record</a></p>
+			    <p><a href="?' . \view\NavigationView::$updateLinkURL . '=' . $this->record->getRecordID() . '">Edit record</a></p>
 				<h3>Rating</h3>
 				<div class="rating">
 					<form method="post">
@@ -143,12 +143,12 @@ class ShowRecordView {
 	private function deleteRecordConfirmation() {
 		$ret = '
 			<div class="alert alert-warning" role="alert">
-				<p>Är du säker på att du vill ta bort <strong>' . $this->record->getTitle() . ' av ' . 
+				<p>Are you sure that you want to delete <strong>' . $this->record->getTitle() . ' by ' . 
 					$this->record->getArtist() . '</strong></p>
 			</div>
 			<form method="post">
-				<input class="btn btn-danger" name="' . self::$confirmDeleteRecordID . '" type="submit" value="Ja">
-				<input class="btn btn-default" name="' . self::$declineDeleteRecordID . '" type="submit" value="Nej">
+				<input class="btn btn-danger" name="' . self::$confirmDeleteRecordID . '" type="submit" value="Yes">
+				<input class="btn btn-default" name="' . self::$declineDeleteRecordID . '" type="submit" value="No">
 			</form>
 		';
 
