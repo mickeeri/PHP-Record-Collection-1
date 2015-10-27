@@ -19,6 +19,10 @@ class IndexRecordView {
 		return $response;
 	}
 
+	/**
+	 * RecordController provides array with the records. 
+	 * @param array() $records all records in database. 
+	 */
 	public function setListOfRecords($records) {
 		$this->records = $records;
 	}
