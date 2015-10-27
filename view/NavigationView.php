@@ -20,17 +20,23 @@ class NavigationView {
 
 	private static $sessionSaveLocation = "\\view\\NavigationView\\message";
 
-	private static $currentRecordCookieName = "currentrecord";
+	//private static $currentRecordCookieName = "currentrecord";
 
 
+	/**
+	 * Provides page navigation bar. 
+	 * @return string HTML
+	 */
 	public function getNavigationBar() {
+		
+		// The open link have css class active. 
 		$this->setAsActive();
 
 		return '
 		<ul class="nav nav-tabs">
 			<li class="' . $this->homeLinkClass . '"><a href="?">Home</a></li>
-			<li class="' . $this->newRecordLinkClass . '"><a href="?' . self::$newRecordURL . '">Add new record</a></li>
-			<li class="' . $this->recordListLinkClass . '"><a href="?' . self::$recordListURL . '">List of records</a></li>
+			<li class="' . $this->newRecordLinkClass . '"><a href="?' . self::$newRecordURL . '">New record</a></li>
+			<li class="' . $this->recordListLinkClass . '"><a href="?' . self::$recordListURL . '">Records</a></li>
 		</ul>
 		';
 	}
@@ -82,19 +88,19 @@ class NavigationView {
 	}
 
 
-	public function getCurrentRecordIDFromCookie() {		
+	// public function getCurrentRecordIDFromCookie() {		
 		
-		if (isset($_COOKIE[self::$currentRecordCookieName])) {
-			$ret = $_COOKIE[self::$currentRecordCookieName];
-		} else {
-			$ret = "";
-		}
+	// 	if (isset($_COOKIE[self::$currentRecordCookieName])) {
+	// 		$ret = $_COOKIE[self::$currentRecordCookieName];
+	// 	} else {
+	// 		$ret = "";
+	// 	}
 
-		// Removes cookie.
-		setcookie(self::$currentRecordCookieName, "", time() - 1);
+	// 	// Removes cookie.
+	// 	setcookie(self::$currentRecordCookieName, "", time() - 1);
 
-		return (int)$ret;
-	}
+	// 	return (int)$ret;
+	// }
 
 	private function setAsActive() {
 		if($this->onNewRecordPage() || $this->onUpdateRecordPage()) {
