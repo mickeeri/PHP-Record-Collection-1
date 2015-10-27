@@ -19,13 +19,17 @@ class HomeView {
 
 	private function getHTML() {
 		return '
-			<h2>Senaste skivorna</h2>
+			<h2>Latest records</h2>
 			<div class="row">
 				' . $this->getThumbnails() . '
 			</div>
 		';
 	}
 
+	/**
+	 * Renders all the records in the array as thumbnails. 
+	 * @return string HTML
+	 */
 	private function getThumbnails() {
 		$ret = '';
 
@@ -33,7 +37,7 @@ class HomeView {
 			$ret .= '
 				<div class="col-sm-6 col-md-3">
 					<div class="thumbnail">
-						<img src="' . \Settings::PIC_UPLOAD_DIR.$record->getCoverFilePath() . '" alt="Omslagsbild">
+						<img src="' . \Settings::PIC_UPLOAD_DIR.$record->getCoverFilePath() . '" alt="Cover art">
 						<div class="caption">
 							<h3>' . $record->getTitle() . '</h3>
 							<h4>' . $record->getArtist() . '</h4>
@@ -41,8 +45,7 @@ class HomeView {
 							
 
 							<a href="?'. \view\NavigationView::$recordShowURL . '=' . $record->getRecordID() . '"" 
-							class="btn btn-default" role="button">Mer info</a>
-							<a href="#" class="btn btn-danger" role="button">Köp</a>
+							class="btn btn-default" role="button">More info</a>
 
 							</p>				
 						</div>

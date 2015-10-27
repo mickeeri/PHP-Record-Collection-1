@@ -29,12 +29,4 @@ class LayoutView {
 	    </html>
 	  	';
 	}
-
-	// private function getActiveLink() {
-	// 	if (isset($_GET["new"])) {
-	// 		return "active";
-	// 	} else {
-	// 		return "";
-	// 	}
-	// }
 }

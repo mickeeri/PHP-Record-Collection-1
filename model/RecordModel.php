@@ -13,6 +13,7 @@ class ImageUploadException extends \Exception {};
 class MissingRelaseYearException extends \Exception {};
 class StringTooLongException extends \Exception {};
 class InvalidFileSizeException extends \Exception {};
+class InvalidCharException extends \Exception {};
 
 class Record {
 	
@@ -40,7 +41,7 @@ class Record {
 			throw new MissingRelaseYearException();
 		}
 
-		if (is_numeric($releaseYear) === false || $releaseYear < 1900 || $releaseYear > 2000) {
+		if (is_numeric($releaseYear) === false || $releaseYear < 1900 || $releaseYear > date("Y")) {
 			throw new WrongReleaseYearException();
 		}
 
@@ -51,10 +52,15 @@ class Record {
 		if (is_string($description) === false || $description === "") {
 			throw new NoDescriptionException();
 		}
+
+		$this->checkForInvalidChar($title);
+		$this->checkForInvalidChar($artist);
+		$this->checkForInvalidChar($releaseYear);
+		$this->checkForInvalidChar($description);
 		
 		
 		/**
-		 * Check if $cover is simple string (file path) and therefore already in database. 
+		 * Check if $cover is simple string (file name) and therefore already in database. 
 		 * Otherwise image file needs validation and to be saved to folder.
 		 */
 		if (is_string($cover) === false) {
@@ -67,6 +73,16 @@ class Record {
 		$this->artist = $artist;
 		$this->releaseYear = $releaseYear;
 		$this->description = $description;
+	}
+
+	/**
+	 * Throws exception if input contains invalid characthers e.g. script tags. 
+	 * @param  string $string input
+	 */
+	private function checkForInvalidChar($string) {
+		if (filter_var($string, FILTER_SANITIZE_STRING) !== $string) {
+			throw new InvalidCharException();
+		}
 	}
 
 	public function setRecordID($recordID) {
@@ -131,8 +147,6 @@ class Record {
 			if (!in_array($fileType, $allowed)) {
 			    throw new InvalidFileTypeException();
 			}
-
-			var_dump($image["size"]);
 
 			if ($image["size"] > 1048576) {
 				throw new InvalidFileSizeException();

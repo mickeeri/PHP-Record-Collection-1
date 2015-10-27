@@ -223,6 +223,8 @@ class NewRecordView {
 			$this->errorMessage = \view\Message::$stringIsTooLong;
 		} catch (\model\InvalidFileSizeException $e) {
 			$this->errorMessage = \view\Message::$fileSizeError;
+		} catch (\model\InvalidCharException $e) {
+			$this->errorMessage = \view\Message::$unallowedCharacters;
 		}
 
 

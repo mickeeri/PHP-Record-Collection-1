@@ -6,9 +6,10 @@ class RecordDontExistException extends \Exception {};
 
 class RecordDAL {
 	
-	private static $recordTable = "record";
-	//private static $recordTable = "Record";
 	private static $ratingTable = "rating";
+	private static $recordTable = "record";
+	// private static $recordTable = "Record";
+	// private static $ratingTable = "Rating";
 
 	function __construct(\mysqli $db) {
 		$this->database = $db;

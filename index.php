@@ -17,7 +17,6 @@ session_start();
 //var_dump($newString);
 //
 
-
 $nv = new \view\NavigationView();
 $mc = new \controller\MasterController($nv);
 
