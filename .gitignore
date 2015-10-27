@@ -1,4 +1,5 @@
 DBSettings.php
-files/pictures
-
+files*
+!files/pictures
+files/pictures*
 !files/pictures/default.png
