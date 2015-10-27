@@ -2,6 +2,9 @@
 
 namespace view;
 
+/**
+ * Provides feedback messages. 
+ */
 class Message {
 
 	// Error messages
@@ -14,8 +17,8 @@ class Message {
 	public static $invalidFileType = "Invalid file type";
 	public static $imageUploadError = "Problem with image upload";
 	public static $generalError = "Sorry! Something went wrong";
-	public static $stringIsTooLong = "The input must not exceed 140 characters";
-	public static $fileSizeError = "The image file size can not exceed 1 MB";
+	public static $stringIsTooLong = "The input must not exceed 100 characters";
+	public static $fileSizeError = "The image file size can not exceed 0.5 MB";
 	public static $unallowedCharacters = "Input contains invalid characters";
 
 	// Success messages

@@ -41,17 +41,22 @@ class Record {
 			throw new MissingRelaseYearException();
 		}
 
+		// Checks if release year is number between 1900 and current year. 
 		if (is_numeric($releaseYear) === false || $releaseYear < 1900 || $releaseYear > date("Y")) {
 			throw new WrongReleaseYearException();
 		}
 
-		if (mb_strlen($description) > 140) {
-			throw new StringTooLongException();
-		}
+		// if (mb_strlen($description) > 140) {
+		// 	throw new StringTooLongException();
+		// }
 
 		if (is_string($description) === false || $description === "") {
 			throw new NoDescriptionException();
 		}
+
+		$this->checkStringLenght($title);
+		$this->checkStringLenght($artist);
+		$this->checkStringLenght($description);
 
 		$this->checkForInvalidChar($title);
 		$this->checkForInvalidChar($artist);
@@ -85,12 +90,31 @@ class Record {
 		}
 	}
 
+	/**
+	 * Validates string length.
+	 */
+	private function checkStringLenght($string) {
+		if (mb_strlen($string) > 100) {
+			throw new StringTooLongException();
+		}
+	}
+
 	public function setRecordID($recordID) {
+		
+		if ($recordID !== null && is_numeric($recordID) === false) {
+			throw new \Exception();
+		}
+
 		$this->recordID = $recordID;
 	}
 
 	public function setRecordRating($rating) {
 		
+		// Ensures rating is between 1 and 5 if not null.
+		if ($rating !== null && $rating < 1 || $rating > 5) {
+			throw new \Exception();
+		}
+
 		$this->rating = $rating;
 	}
 
@@ -132,11 +156,17 @@ class Record {
 
 		// Use default image if no image is uploaded. 
 		if ($image["name"] === "") {
+			
 			$name = self::$defaultCoverFileName;
+		
 		} else {
 
-
-		
+			// Create directory for storing pics if it don't exist. 
+			if (!file_exists(\Settings::PIC_UPLOAD_DIR)) {
+			    mkdir(\Settings::PIC_UPLOAD_DIR, 0777, true);
+			}
+			
+			// If there is error. 
 			if ($image["error"] !== UPLOAD_ERR_OK) {
 				throw new \ImageUploadException();
 			}		
@@ -148,13 +178,12 @@ class Record {
 			    throw new InvalidFileTypeException();
 			}
 
-			if ($image["size"] > 1048576) {
+			// Checking that file size don't exceed 0.5MB. 
+			if ($image["size"] > 524288) {
 				throw new InvalidFileSizeException();
 			}
 
-			// if (condition) {
-			// 	# code...
-			// }
+			//1048576
 
 			// Ensures that file name is safe.
 			$name = preg_replace("/[^A-Z0-9._-]/i", "_", $image["name"]);
@@ -175,7 +204,6 @@ class Record {
 			
 			// Set proper permissions on the new file
 			chmod(\Settings::PIC_UPLOAD_DIR . $name, 0644);
-
 		}
 
 		return $name;

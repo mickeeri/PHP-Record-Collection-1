@@ -60,8 +60,7 @@ class MasterController {
 		elseif ($this->navigationView->onUpdateRecordPage()) {
 			$this->view = new \view\NewRecordView();
 			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);			
-			$recordID = $this->navigationView->getRecordToShow();
-			//$controller->getRecord($recordID);						
+			$recordID = $this->navigationView->getRecordToShow();					
 			$controller->updateRecord($recordID);	
 		}
 		
@@ -89,14 +88,14 @@ class MasterController {
 			$controller->deleteRecord($recordID);
 		}
 
-		// RATE
-		elseif ($this->navigationView->wantsToRateRecord()) {
-			$this->view = new \view\ShowRecordView();
-			$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-			$rating = $this->navigationView->getRecordRating();
-			$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
-			$controller->rateRecord($rating, $recordID);			
-		}
+		// // RATE
+		// elseif ($this->navigationView->wantsToRateRecord()) {
+		// 	$this->view = new \view\ShowRecordView();
+		// 	$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
+		// 	$rating = $this->navigationView->getRecordRating();
+		// 	$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
+		// 	$controller->rateRecord($rating, $recordID);			
+		// }
 		
 		// HOME PAGE
 		else {
@@ -105,15 +104,11 @@ class MasterController {
 			$controller->doHome();
 		}
 		
-
-
-
-
 		$this->mysqli->close();		
 	}
 
 	/**
-	 * Returns view selected in handleInput().
+	 * Returns view assigned in handleInput().
 	 * @return \view\...
 	 */
 	public function generateOutput() {

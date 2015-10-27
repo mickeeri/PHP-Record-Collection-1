@@ -13,10 +13,6 @@ if (Settings::DISPLAY_ERRORS) {
 
 session_start();
 
-
-//var_dump($newString);
-//
-
 $nv = new \view\NavigationView();
 $mc = new \controller\MasterController($nv);
 
@@ -28,12 +24,4 @@ $view = $mc->generateOutput();
 $lv = new \view\LayoutView();
 
 $lv->render($nv, $view);
-
-
-/**
- * TODO
- * Uppdatera skiva
- * MessageView
- * Skapa mapp för filer om den inte finns.
- */
 

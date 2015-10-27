@@ -15,9 +15,12 @@ class RecordDAL {
 		$this->database = $db;
 	}
 
+	/**
+	 * Add new record to database. 
+	 * @param \model\Record $recordToBeAdded
+	 */
 	public function add(\model\Record $recordToBeAdded) {
 
-		// TODO: Förenkla prepeare statement.
 		$stmt = $this->database->prepare("INSERT INTO `" . \DbSettings::DATABASE .  "`.`" . self::$recordTable . "`(
 			`title`, `artist`, `releaseYear`, `description`, `cover`) 
 				VALUES (?, ?, ?, ?, ?)");
@@ -37,9 +40,13 @@ class RecordDAL {
 		$stmt->execute();
 	}
 
+	
+	/**
+	 * Update of existing record. 
+	 * @param  \model\Record $recordToBeUpdated                      
+	 */
 	public function updateRecord(\model\Record $recordToBeUpdated) {
-		/// UPDATE `phpassignment`.`record` SET `artist` = 'Bruce Springsteen' WHERE `record`.`recordID` = 19;
-
+		
 		$stmt = $this->database->prepare("UPDATE " . self::$recordTable . " SET title=?, artist=?, releaseYear=?, 
 			description=?, cover=? WHERE recordID=?");
 
@@ -79,6 +86,7 @@ class RecordDAL {
 
 		while ($stmt->fetch()) {
 			$record = new \model\Record($title, $artist, $releaseYear, $description, $cover);
+			// Sets record ID. 
 			$record->setRecordID($recordID);
 			$records[] = $record;
 		}
@@ -91,8 +99,12 @@ class RecordDAL {
 		return $records;
 	}
 
+	
+	/**
+	 * Fetches the 4 latest records. 
+	 * @return array() $latestRecords
+	 */
 	public function getLatestRecords() {
-		// SELECT * from `record` ORDER BY `recordID` DESC LIMIT 2
 
 		$latestRecords = array();
 
@@ -101,8 +113,6 @@ class RecordDAL {
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
 		}
-
-		//$stmt->bind_param("i", $recordID);
 
 		$stmt->execute();
 
@@ -114,18 +124,13 @@ class RecordDAL {
 			$latestRecords[] = $record;
 		}
 
-
-		
-
-		// TODO kasta undantag om tom array.
-
 		return $latestRecords;
 	}
 
 
 	/**
 	 * Fetches one record from database.
-	 * @param  [type] $recordID [description]
+	 * @param  int $recordID 
 	 * @return \model\Record record with given id.
 	 */
 	public function getRecordByID($recordID) {
@@ -155,27 +160,41 @@ class RecordDAL {
 
 		$stmt->close();
 
+		// Assings rating
 		$record->setRecordRating($this->getRating($record));
 
 		return $record;
 	}
 
-	public function removeRecord($recordID) {
+	/**
+	 * Deletes record from database. 
+	 * @param  \model\Record $recordToRemove
+	 * @return void
+	 */
+	public function removeRecord(\model\Record $recordToRemove) {
 		$stmt = $this->database->prepare("DELETE FROM `" . self::$recordTable . "` WHERE recordID = ?");
 
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
 		}
 
+		$recordID = $recordToRemove->getRecordID();
+
 		$stmt->bind_param("i", $recordID);
 		
 		$stmt->execute();	
 
 		// Removes record rating as well.
-		$this->removeRating($recordID);	
+		$this->removeRating($recordToRemove);	
 	}
 
+	/**
+	 * Adds rating to the table containing recordID and rating. 
+	 * @param \model\Record $record record to rate
+	 * @param int        $rating number from 1-5
+	 */
 	public function addRatingToRecord(\model\Record $record, $rating) {
+		
 		$stmt = $this->database->prepare("INSERT INTO " . self::$ratingTable . "(recordID, rating) VALUES (?, ?)");
 
 		if ($stmt === false) {
@@ -214,7 +233,7 @@ class RecordDAL {
 	/**
 	 * Fetches score of given record.
 	 * @param  \model\Record $record [description]
-	 * @return [type]                [description]
+	 * @return int $rating
 	 */
 	public function getRating(\model\Record $record) {
 		
@@ -241,7 +260,12 @@ class RecordDAL {
 		return $rating;
 	}
 
-	public function removeRating($recordID) {
+	/**
+	 * Removes rating from record with given id. 
+	 * @param  \model\Record $record record to remove rating from
+	 * @return [type]           [description]
+	 */
+	public function removeRating(\model\Record $record) {
 		
 		$stmt = $this->database->prepare("DELETE FROM " . self::$ratingTable . " WHERE recordID = ?");
 	
@@ -249,6 +273,8 @@ class RecordDAL {
 		if ($stmt === false) {
 			throw new \Exception($this->database->error);
 		}
+
+		$recordID = $record->getRecordID();
 
 		$stmt->bind_param("i", $recordID);
 		

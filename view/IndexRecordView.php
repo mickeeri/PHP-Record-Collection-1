@@ -2,6 +2,9 @@
 
 namespace view;
 
+/**
+ * Handles list of all the records in database. 
+ */
 class IndexRecordView {
 
 	private $records = array();
@@ -21,8 +24,6 @@ class IndexRecordView {
 	}
 
 	private function renderTable() {
-
-
 		$ret = '
 			<h2>My records</h2>
 			<table class="table table-striped">

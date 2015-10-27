@@ -15,6 +15,11 @@ class RecordFacade {
 		$this->dal = $recordDAL;
 	}
 
+	/**
+	 * Save record to datbase on either adding of new record or update of existing record. 
+	 * @param  \model\Record $recordToBeAdded
+	 * @return void
+	 */
 	public function saveRecord(\model\Record $recordToBeAdded) {
 
 		// If id is null record does not exists in db. 
@@ -43,14 +48,14 @@ class RecordFacade {
 
 	public function removeRecord(\model\Record $record) {
 		
-		if ($record->getCoverFilePath() !== self::$defaultCoverFileName) {
-			// Removes cover image from directory.
+		// Removes cover image from directory as long as not default pic. 
+		if ($record->getCoverFilePath() !== self::$defaultCoverFileName) {			
 			$filename = \Settings::PIC_UPLOAD_DIR . $record->getCoverFilePath();
 			unlink($filename);
 		}
 
 		// Removes entry in the database.
-		$this->dal->removeRecord($record->getRecordID());
+		$this->dal->removeRecord($record);
 	}
 
 	public function getRecord($id) {
@@ -74,19 +79,24 @@ class RecordFacade {
 			
 			// If user selects score that is already set the rating is removed altogether. 
 			if ($this->getRecordRating($record) === $rating) {
-				$this->dal->removeRating($record->getRecordID());
+				$this->dal->removeRating($record);
 			} 
-			// Just update.
+			// Just update rating.
 			else {
 				$this->dal->updateRecordRating($record, $rating);
 			}
 
-			
+		// Add rating.	
 		} else {
 			$this->dal->addRatingToRecord($record, $rating);
 		}		
 	}
 
+	/**
+	 * Get rating of given $record.
+	 * @param  \model\Record $record 
+	 * @return int $rating from 1-5
+	 */
 	public function getRecordRating(\model\Record $record) {
 		return $this->dal->getRating($record);
 	}

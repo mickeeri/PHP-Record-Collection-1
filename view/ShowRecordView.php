@@ -2,24 +2,29 @@
 
 namespace view;
 
+/**
+ * View for showing one record. 
+ */
 class ShowRecordView {
 
+	/**
+	 * @var \model\Record selected record
+	 */
 	private $record;
-	//private $recordRating = $record->getRating();
 
+	// True if user has pressed delete record link.
 	private $userWantsToDeleteRecord = false;
 
 	private static $deleteLinkID = "deleterecord";
 	private static $confirmDeleteRecordID = "confirmdelete";
 	private static $declineDeleteRecordID = "declinedelete";
-	//private static $updateLinkID = "editrecord";
 
 	// Rating submit button names.
 	private static $submitRating1ID = "rating1";
 	private static $submitRating2ID = "rating2";
 	private static $submitRating3ID = "rating3";
 	private static $submitRating4ID = "rating4";
-	private static $submitRating5ID = "rating5";
+	private static $submitRating5ID = "rating5";	
 
 	// If album does not have rating the css class of the buttons is default.
 	private $submitRating1CssClass = "default";
@@ -29,12 +34,11 @@ class ShowRecordView {
 	private $submitRating5CssClass = "default";
 
 
-	//public $hasJustBeenRated = false;
 
-	// function __construct() {
-	// 	# code...
-	// }
 
+	/**
+	 * @return string HTML response. 
+	 */
 	public function response() {
 
 		// Check if record has rating.
@@ -117,26 +121,6 @@ class ShowRecordView {
 		}
 	}
 
-	// private function buildRatingLinks() {
-	// 	$ret = '';
-
-	// 	// for ($i=1; $i <= 5; $i++) { 
-	// 	// 	$ret .= '
-	// 	// 		<a href="?' . \view\NavigationView::$recordShowURL . '=' . $this->record->getRecordID() . '?' . 
-	// 	// 			\view\NavigationView::$ratingLinkID . '=' . $i . '">' . $i .'</a>
-	// 	// 	';
-	// 	// }
-	// 	// 
-	// 	for ($i=1; $i <= 5; $i++) { 
-	// 		$ret .= '
-	// 			<a href="?' . \view\NavigationView::$ratingLinkID . '=' . $i . '">' . $i .'</a>
-	// 		';
-	// 	}
-
-	// 	return $ret;
-	// }
-
-
 	/**
 	 * If user has pressed delete record link this confirmation form is rendered.
 	 */
@@ -186,7 +170,7 @@ class ShowRecordView {
 	}
 
 	/**
-	 * @return boolean true if user has answered no on question "Do you want to delete album..."
+	 * @return boolean true if user has answered No on question "Do you want to delete album..."
 	 */
 	public function userHasDeclinedDelete() {		
 		return isset($_POST[self::$declineDeleteRecordID]);

@@ -2,8 +2,15 @@
 
 namespace view;
 
+
 class LayoutView {
 
+	/**
+	 * Renders HTML basic layout. 
+	 * @param  \view\NavigationView $nv   [description]
+	 * @param  \view\ $view provided by MasterController's generateOutput method. 
+	 * @return void
+	 */
 	public function render(\view\NavigationView $nv, $view) {
 		echo '
 		<!DOCTYPE html lang="sv">

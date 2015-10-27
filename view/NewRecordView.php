@@ -7,7 +7,7 @@ namespace view;
 */
 class NewRecordView {
 		
-	//private $errorMessageArray = array();
+	// Input field ID's
 	private static $titleInputId = "title";
 	private static $artistInputId = "artist";
 	private static $releaseYearInputId = "year";
@@ -16,11 +16,16 @@ class NewRecordView {
 	private static $coverInputId = "cover";
 	private static $submitPostId = "save";
 
+	// Messages
 	private $errorMessage = "";
 	private $successMessage = "";
+	
+	// True if record has just been successfully.
 	public $isRecordSaved = false;
-	//public $isRecordUpdated = false;
 
+	/**
+	 * @var \model\Record set if request is update of existing album, null if new album. 
+	 */
 	private $record;
 
 	// function __construct() {
@@ -42,7 +47,7 @@ class NewRecordView {
 	}
 
 	/**
-	 * Renders form for adding new record.
+	 * Renders form for adding new record or updating existing album.
 	 * @return string HTML
 	 */
 	private function getNewRecordForm() {
@@ -77,13 +82,6 @@ class NewRecordView {
 	 */
 	private function getInputField($title, $name, $type){
 
-		// // Get the value from current object if update otherwise textfields should be empty.
-		// if ($this->isUpdate()) {
-		// 	$value = $this->getPostField($name);
-		// } else {
-		// 	$value = "";
-		// }
-
 		$value = $this->getPostField($name);
 			
 		return "
@@ -101,6 +99,8 @@ class NewRecordView {
 	 * @return string        field value
 	 */
 	private function getPostField($field){
+		
+		// If update get values from existing album.
 		if ($this->isUpdate()) {			
 			if ($field === self::$titleInputId) {
 				return trim($this->record->getTitle());
@@ -109,10 +109,10 @@ class NewRecordView {
 			} if ($field === self::$releaseYearInputId) {
 				return trim($this->record->getReleaseYear());
 			} if ($field === self::$descriptionInputId) {
-				return $this->record->getDescription();
+				return trim($this->record->getDescription());
 			} 
 		}
-
+		// Else get value from just filled in input.
 		elseif (isset($_POST[$field]) && $this->isRecordSaved === false) {			
 			// Trims and removes special chars. 
 			return filter_var(trim($_POST[$field]), FILTER_SANITIZE_STRING);
@@ -122,7 +122,7 @@ class NewRecordView {
 	}
 
 	/**
-	 * @return string HTML and error message if there is one.
+	 * @return string HTML error message if there is one.
 	 */
 	private function showErrorMessage() {
 		
@@ -140,7 +140,7 @@ class NewRecordView {
 	}
 
 	/**
-	 * @return string HTML and success message if there is one.
+	 * @return string HTML success message if there is one.
 	 */
 	private function showSuccessMessage() {
 		
@@ -166,7 +166,7 @@ class NewRecordView {
 
 	/**
 	 * Get the input via $_POST method and creates new Record object.
-	 * @return \model\Record $record, null if new object doesn't pass validation.
+	 * @return \model\Record $record, null if input doesn't pass validation.
 	 */
 	public function getNewRecord() {
 		
@@ -174,7 +174,6 @@ class NewRecordView {
 		$artist = $_POST[self::$artistInputId];
 		$releaseYear = $_POST[self::$releaseYearInputId];
 		$description = $_POST[self::$descriptionInputId];
-		//$price = $_POST[self::$priceInputId];
 		
 		if ($this->isUpdate()) {
 			
@@ -195,16 +194,15 @@ class NewRecordView {
 		else {
 			$cover = $_FILES[self::$coverInputId];
 			$recordID = null;
-		}
-				
-		try {							
-			
+		}				
+		try {										
 			// Creates new record object and returns it. 
 			$record = new \model\Record($title, $artist, $releaseYear, $description, $cover);
 			$record->setRecordID($recordID);
 
 			return $record;
 
+		// Handles exceptions thrown in RecordModel
 		} catch (\model\NoTitleException $e) {
 			$this->errorMessage = \view\Message::$missingTitle;
 		} catch (\model\NoArtistException $e) {
@@ -225,26 +223,24 @@ class NewRecordView {
 			$this->errorMessage = \view\Message::$fileSizeError;
 		} catch (\model\InvalidCharException $e) {
 			$this->errorMessage = \view\Message::$unallowedCharacters;
-		}
-
-
-		catch (\Exception $e) {
-			$this->errorMessage = \view\Message::$generalError;
 		} 
+
+		// catch (\Exception $e) {
+		// 	$this->errorMessage = \view\Message::$generalError;
+		// } 
 		
 		return null;
 	}
 
 	/**
 	 * Controller sets private member record to current record based on id in url.
-	 * @param \model\Record $record record to update, null if new album 
+	 * @param \model\Record $record record to update
 	 */
 	public function setRecord($record) {
 		$this->record = $record;
 	}
 
 	/**
-	 * Sets error message
 	 * @param string $message
 	 */
 	public function setErrorMessage($message) {

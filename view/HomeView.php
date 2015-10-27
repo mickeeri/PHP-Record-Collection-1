@@ -7,11 +7,15 @@ namespace view;
 */
 class HomeView {
 	
+	/**
+	 * Array with latest four records. 
+	 * @var array
+	 */
 	private $latestRecords = array();
 
-	function __construct() {
+	// function __construct() {
 		
-	}
+	// }
 
 	public function response() {
 		return $this->getHTML();
@@ -45,7 +49,7 @@ class HomeView {
 							
 
 							<a href="?'. \view\NavigationView::$recordShowURL . '=' . $record->getRecordID() . '"" 
-							class="btn btn-default" role="button">More info</a>
+							class="btn btn-danger" role="button">More info</a>
 
 							</p>				
 						</div>
@@ -57,6 +61,10 @@ class HomeView {
 		return $ret;
 	}
 
+	/**
+	 * Recordcontroller provides latest records from RecordFacade. 
+	 * @param array() $recordArray
+	 */
 	public function setLatestRecords($recordArray) {
 		$this->latestRecords = $recordArray;
 	}
