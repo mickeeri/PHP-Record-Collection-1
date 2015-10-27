@@ -8,15 +8,9 @@ namespace view;
 class IndexRecordView {
 
 	private $records = array();
-	
-	// public function __construct() {
 
-	// }
-
-	public function response() {
-		$response = $this->renderTable();
-
-		return $response;
+	public function response() {		
+		return $this->renderTable();
 	}
 
 	/**

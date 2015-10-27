@@ -18,6 +18,7 @@ class HomeController {
 	}
 
 	public function doHome() {
+		// Provides array of latest records to view.
 		$this->view->setLatestRecords($this->recordFacade->getLatestRecords());
 	}
 }

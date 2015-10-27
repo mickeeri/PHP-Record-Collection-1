@@ -2,24 +2,22 @@
 
 namespace controller;
 
+// Including necessary views.
 require_once("view/HomeView.php");
-
-// Record views
 require_once("view/NewRecordView.php");
 require_once("view/IndexRecordView.php");
 require_once("view/ShowRecordView.php");
 
-
-
+// Controllers
 require_once("controller/HomeController.php");
 require_once("controller/RecordController.php");
 
-
+// Models
 require_once("model/RecordModel.php");
 require_once("model/RecordFacade.php");
-
 require_once("model/RecordDAL.php");
 
+// Datebase settings file
 require_once("DBSettings.php");
 
 class MasterController {
@@ -27,6 +25,7 @@ class MasterController {
 	private $navigationView;
 
 	public function __construct(\view\NavigationView $navigationView) {
+		
 		// Setting up database.
 		$this->mysqli = new \mysqli(\DbSettings::HOST, \DbSettings::USERNAME, \DbSettings::PASSWORD, \DbSettings::DATABASE);
 		if(mysqli_connect_errno()) {
@@ -87,15 +86,6 @@ class MasterController {
 			$recordID = $this->navigationView->getRecordToShow();
 			$controller->deleteRecord($recordID);
 		}
-
-		// // RATE
-		// elseif ($this->navigationView->wantsToRateRecord()) {
-		// 	$this->view = new \view\ShowRecordView();
-		// 	$controller = new \controller\RecordController($this->view, $this->navigationView, $this->recordFacade);
-		// 	$rating = $this->navigationView->getRecordRating();
-		// 	$recordID = $this->navigationView->getCurrentRecordIDFromCookie();
-		// 	$controller->rateRecord($rating, $recordID);			
-		// }
 		
 		// HOME PAGE
 		else {
@@ -109,7 +99,7 @@ class MasterController {
 
 	/**
 	 * Returns view assigned in handleInput().
-	 * @return \view\...
+	 * @return \view\
 	 */
 	public function generateOutput() {
 		return $this->view;

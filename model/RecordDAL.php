@@ -191,7 +191,7 @@ class RecordDAL {
 	/**
 	 * Adds rating to the table containing recordID and rating. 
 	 * @param \model\Record $record record to rate
-	 * @param int        $rating number from 1-5
+	 * @param int $rating number 1-5
 	 */
 	public function addRatingToRecord(\model\Record $record, $rating) {
 		
@@ -263,7 +263,7 @@ class RecordDAL {
 	/**
 	 * Removes rating from record with given id. 
 	 * @param  \model\Record $record record to remove rating from
-	 * @return [type]           [description]
+	 * @return void
 	 */
 	public function removeRating(\model\Record $record) {
 		

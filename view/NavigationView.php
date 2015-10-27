@@ -4,14 +4,12 @@ namespace view;
 
 class NavigationView {
 
-	// Static url's to use GET on. Some of them public to be accessed in other views. 
+	// Static query-strings for method $_GET. Some of them public to be accessed in other views. 
 	private static $newRecordURL = "newrecord";
 	public static $recordListURL = "records";
 	public static $recordShowURL = "record";
 	private static $deleteLinkURL = "deleterecord";
 	public static $updateLinkURL = "editrecord";
-
-	//public static $ratingLinkID = "rate";
 
 	// Navbar css classes can be displayed as "not-active" or "active"
 	private $newRecordLinkClass = "not-active";
@@ -19,9 +17,6 @@ class NavigationView {
 	private $homeLinkClass = "not-active";
 
 	private static $sessionSaveLocation = "\\view\\NavigationView\\message";
-
-	//private static $currentRecordCookieName = "currentrecord";
-
 
 	/**
 	 * Provides page navigation bar. 
@@ -40,10 +35,9 @@ class NavigationView {
 		</ul>
 		';
 	}
-
 	
 	/**
-	 * Booelean methods returning if on certain page. 
+	 * Booelean methods returning true if on certain page. 
 	 */
 	public function onNewRecordPage() {
 		return isset($_GET[self::$newRecordURL]);
@@ -65,11 +59,6 @@ class NavigationView {
 		return isset($_GET[self::$updateLinkURL]);
 	}
 
-	// public function wantsToRateRecord() {		
-	// 	return isset($_GET[self::$ratingLinkID]);
-	// }
-
-
 	/**
 	 * Provides record ID from the URL
 	 * @return string recordID
@@ -87,21 +76,9 @@ class NavigationView {
 		}
 	}
 
-
-	// public function getCurrentRecordIDFromCookie() {		
-		
-	// 	if (isset($_COOKIE[self::$currentRecordCookieName])) {
-	// 		$ret = $_COOKIE[self::$currentRecordCookieName];
-	// 	} else {
-	// 		$ret = "";
-	// 	}
-
-	// 	// Removes cookie.
-	// 	setcookie(self::$currentRecordCookieName, "", time() - 1);
-
-	// 	return (int)$ret;
-	// }
-
+	/**
+	 * Sets css class "active" to the current tab in navigation bar.
+	 */
 	private function setAsActive() {
 		if($this->onNewRecordPage() || $this->onUpdateRecordPage()) {
 			$this->newRecordLinkClass = "active";

@@ -6,7 +6,7 @@
 class Settings {
 	
 	
-	const DISPLAY_ERRORS = true;
+	const DISPLAY_ERRORS = false;
 
 	const PIC_UPLOAD_DIR = "files/pictures/";
 }

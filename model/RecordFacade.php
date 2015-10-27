@@ -3,7 +3,7 @@
 namespace model;
 
 /**
-* 
+* A facade between other classes and dal class.
 */
 class RecordFacade {
 	

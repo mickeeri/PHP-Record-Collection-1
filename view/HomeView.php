@@ -13,10 +13,6 @@ class HomeView {
 	 */
 	private $latestRecords = array();
 
-	// function __construct() {
-		
-	// }
-
 	public function response() {
 		return $this->getHTML();
 	}
@@ -38,6 +34,9 @@ class HomeView {
 		$ret = '';
 
 		foreach ($this->latestRecords as $record) {
+			
+			$queryString = \view\NavigationView::$recordShowURL . "=" . $record->getRecordID();
+
 			$ret .= '
 				<div class="col-sm-6 col-md-3">
 					<div class="thumbnail">
@@ -45,13 +44,8 @@ class HomeView {
 						<div class="caption">
 							<h3>' . $record->getTitle() . '</h3>
 							<h4>' . $record->getArtist() . '</h4>
-							<p>' . $record->getDescription() . '</p>
-							
-
-							<a href="?'. \view\NavigationView::$recordShowURL . '=' . $record->getRecordID() . '"" 
-							class="btn btn-danger" role="button">More info</a>
-
-							</p>				
+							<p>' . $record->getDescription() . '</p>						
+							<a href="?'. $queryString . '" class="btn btn-danger" role="button">More info</a>			
 						</div>
 					</div>
 				</div>

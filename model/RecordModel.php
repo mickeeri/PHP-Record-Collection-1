@@ -46,10 +46,6 @@ class Record {
 			throw new WrongReleaseYearException();
 		}
 
-		// if (mb_strlen($description) > 140) {
-		// 	throw new StringTooLongException();
-		// }
-
 		if (is_string($description) === false || $description === "") {
 			throw new NoDescriptionException();
 		}
@@ -66,7 +62,7 @@ class Record {
 		
 		/**
 		 * Check if $cover is simple string (file name) and therefore already in database. 
-		 * Otherwise image file needs validation and to be saved to folder.
+		 * Otherwise image file needs validation and to be saved to picture directory.
 		 */
 		if (is_string($cover) === false) {
 			// Calls method to save and store picture file. Method returns name of file.
@@ -81,7 +77,7 @@ class Record {
 	}
 
 	/**
-	 * Throws exception if input contains invalid characthers e.g. script tags. 
+	 * Throws exception if input contains invalid characthers such as script tags. 
 	 * @param  string $string input
 	 */
 	private function checkForInvalidChar($string) {
@@ -150,7 +146,7 @@ class Record {
 	 * Validates and save image.
 	 * Some code from: http://www.sitepoint.com/file-uploads-with-php/
 	 * @param  array $image information of image uploaded via HTTP POST $_FILES.
-	 * @return string       sanatized file name
+	 * @return string $name sanatized file name
 	 */
 	private function validateAndSaveCoverFile($image) {
 
@@ -182,8 +178,6 @@ class Record {
 			if ($image["size"] > 524288) {
 				throw new InvalidFileSizeException();
 			}
-
-			//1048576
 
 			// Ensures that file name is safe.
 			$name = preg_replace("/[^A-Z0-9._-]/i", "_", $image["name"]);

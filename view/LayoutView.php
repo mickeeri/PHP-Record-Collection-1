@@ -7,14 +7,13 @@ class LayoutView {
 
 	/**
 	 * Renders HTML basic layout. 
-	 * @param  \view\NavigationView $nv   [description]
+	 * @param  \view\NavigationView $nv 
 	 * @param  \view\ $view provided by MasterController's generateOutput method. 
-	 * @return void
 	 */
 	public function render(\view\NavigationView $nv, $view) {
 		echo '
-		<!DOCTYPE html lang="sv">
-		    <html>
+		<!DOCTYPE html>
+		    <html lang="en">
 		      <head>
 		        <meta charset="utf-8">
 		        <meta http-equiv="X-UA-Compatible" content="IE=edge">

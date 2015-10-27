@@ -67,9 +67,12 @@ class NewRecordView {
 					$this->getInputField("Title", self::$titleInputId, "text") .
 					$this->getInputField("Artist", self::$artistInputId, "text") .
 					$this->getInputField("Release year", self::$releaseYearInputId, "text") .
-					$this->getInputField("About", self::$descriptionInputId, "textarea") .
-					$this->getInputField("Upload cover", self::$coverInputId, "file") 
-					.'<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Save">
+					$this->getInputField("About", self::$descriptionInputId, "text") .
+					'<div class="form-group">
+						<label for="' . self::$coverInputId . '">Upload cover</label>
+						<input class="form-control" id="' . self::$coverInputId . '" type="file" name="' . self::$coverInputId . '">
+					</div>
+					<input class="btn btn-success" name="' . self::$submitPostId . '" type="submit" value="Save">
 				</form>
 			</div>
 		';
@@ -223,11 +226,9 @@ class NewRecordView {
 			$this->errorMessage = \view\Message::$fileSizeError;
 		} catch (\model\InvalidCharException $e) {
 			$this->errorMessage = \view\Message::$unallowedCharacters;
+		} catch (\Exception $e) {
+			$this->errorMessage = \view\Message::$generalError;
 		} 
-
-		// catch (\Exception $e) {
-		// 	$this->errorMessage = \view\Message::$generalError;
-		// } 
 		
 		return null;
 	}

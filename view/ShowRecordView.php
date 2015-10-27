@@ -33,9 +33,6 @@ class ShowRecordView {
 	private $submitRating4CssClass = "default";
 	private $submitRating5CssClass = "default";
 
-
-
-
 	/**
 	 * @return string HTML response. 
 	 */
